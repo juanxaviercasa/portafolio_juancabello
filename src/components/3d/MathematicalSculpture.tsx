@@ -5,53 +5,7 @@ import { usePortfolioStore } from '../../store/usePortfolioStore';
 import { createCliffordTorusGeometry } from '../../utils/mathFormulas';
 import { globalMouseVector } from '../../utils/mouseTracker';
 
-// Fénix 357 Dark Mode color palettes (Incandescent amber, electric purple, neon magenta)
-const THEME_COLORS_DARK = {
-  amber: {
-    primary: new THREE.Color('#f59e0b'), // incandescent amber
-    secondary: new THREE.Color('#9333ea'), // electric violet
-    accent: new THREE.Color('#fde047'), // bright flame gold
-  },
-  violet: {
-    primary: new THREE.Color('#c084fc'), // amethyst light
-    secondary: new THREE.Color('#7e22ce'), // royal purple
-    accent: new THREE.Color('#fbbf24'), // golden amber crown
-  },
-  cyan: {
-    primary: new THREE.Color('#38bdf8'),
-    secondary: new THREE.Color('#6366f1'),
-    accent: new THREE.Color('#fcd34d'),
-  },
-  emerald: {
-    primary: new THREE.Color('#34d399'),
-    secondary: new THREE.Color('#8b5cf6'),
-    accent: new THREE.Color('#fbbf24'),
-  },
-};
-
-// Fénix 357 Light Mode color palettes (Amethyst slate & rich amber fire)
-const THEME_COLORS_LIGHT = {
-  amber: {
-    primary: new THREE.Color('#d97706'),
-    secondary: new THREE.Color('#7e22ce'),
-    accent: new THREE.Color('#b45309'),
-  },
-  violet: {
-    primary: new THREE.Color('#7c3aed'),
-    secondary: new THREE.Color('#c026d3'),
-    accent: new THREE.Color('#d97706'),
-  },
-  cyan: {
-    primary: new THREE.Color('#2563eb'),
-    secondary: new THREE.Color('#9333ea'),
-    accent: new THREE.Color('#d97706'),
-  },
-  emerald: {
-    primary: new THREE.Color('#059669'),
-    secondary: new THREE.Color('#7c3aed'),
-    accent: new THREE.Color('#d97706'),
-  },
-};
+import { THEME_COLORS_DARK, THEME_COLORS_LIGHT } from './themeColors';
 
 const vertexShader = `
   uniform float uTime;
@@ -176,10 +130,10 @@ const fragmentShader = `
       finalColor = mix(finalColor, uColorAccent, uScroll * 0.15);
       gl_FragColor = vec4(finalColor, 0.94);
     } else {
-      // MODO OSCURO: Bioluminiscencia del Fénix 357 con corona incandescente
+      // MODO OSCURO: Bioluminiscencia espectral pura con corona nítida
       finalColor = hotGlow * diff;
       finalColor += fresnel * uColorAccent * 1.5;
-      finalColor += spec * vec3(1.0, 0.95, 0.8);
+      finalColor += spec * vec3(1.0);
       // Pulso armónico sutil
       float pulse = 0.95 + 0.05 * sin(uTime * 2.0);
       finalColor *= pulse;
@@ -225,7 +179,7 @@ export const MathematicalSculpture: React.FC = () => {
   // Colores activos según el modo de tema
   const activeColors = useMemo(() => {
     const paletteMap = isLight ? THEME_COLORS_LIGHT : THEME_COLORS_DARK;
-    return paletteMap[labParams.colorTheme] || paletteMap.amber;
+    return paletteMap[labParams.colorTheme] || paletteMap.cyan;
   }, [isLight, labParams.colorTheme]);
 
   // Uniforms del shader

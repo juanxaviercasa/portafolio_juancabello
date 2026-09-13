@@ -3,6 +3,7 @@ import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { usePortfolioStore } from '../../store/usePortfolioStore';
 import { globalMouseVector } from '../../utils/mouseTracker';
+import { THEME_COLORS_DARK, THEME_COLORS_LIGHT } from './themeColors';
 
 const DESKTOP_COUNT = 3500;
 const MOBILE_COUNT = 1500;
@@ -11,7 +12,7 @@ const MOBILE_COUNT = 1500;
 function generatePhoenixBuffers(totalCount: number) {
   const positions = new Float32Array(totalCount * 3);
   const randoms = new Float32Array(totalCount * 4); // [phase, speed, wingFactor, scale]
-  const colors = new Float32Array(totalCount * 3);
+  const factors = new Float32Array(totalCount * 2); // [colorMix, accentIntensity]
 
   let seed = 35711;
   const pseudoRandom = () => {
@@ -19,20 +20,16 @@ function generatePhoenixBuffers(totalCount: number) {
     return (seed - 1) / 2147483646;
   };
 
-  const amberColor = new THREE.Color('#fbbf24');
-  const fireColor = new THREE.Color('#f59e0b');
-  const magentaColor = new THREE.Color('#e879f9');
-  const purpleColor = new THREE.Color('#a855f7');
-  const tempColor = new THREE.Color();
-
   for (let i = 0; i < totalCount; i++) {
     const i3 = i * 3;
     const i4 = i * 4;
+    const i2 = i * 2;
 
-    // Distribución alada del Fénix: 65% alas paramétricas, 35% columna de llama central
+    // Distribución alada del Fénix: 68% alas paramétricas, 32% columna de llama central
     const isWing = pseudoRandom() < 0.68;
     let x = 0, y = 0, z = 0;
-    let tColor = 0;
+    let colorMix = 0;
+    let accentIntensity = 0;
 
     if (isWing) {
       // Alas abiertas en abanico helicoidal
@@ -43,7 +40,8 @@ function generatePhoenixBuffers(totalCount: number) {
       x = side * (span * Math.cos(angle) + 0.3);
       y = span * Math.sin(angle) * 0.7 + (pseudoRandom() - 0.5) * 0.9;
       z = (pseudoRandom() - 0.5) * 1.2 + Math.sin(span * 2.0) * 0.4;
-      tColor = span / 3.0; // Puntas de las alas más calientes / doradas
+      colorMix = Math.min(1.0, span / 2.8);
+      accentIntensity = Math.max(0.0, (span - 1.6) / 1.5); // Puntas con destello de acento
     } else {
       // Columna de fuego y ascensión térmica central
       const height = (pseudoRandom() - 0.5) * 3.6;
@@ -53,7 +51,8 @@ function generatePhoenixBuffers(totalCount: number) {
       x = radius * Math.cos(theta);
       y = height;
       z = radius * Math.sin(theta);
-      tColor = 1.0 - Math.abs(height) / 2.0;
+      colorMix = Math.min(1.0, 1.0 - Math.abs(height) / 2.2);
+      accentIntensity = Math.max(0.0, (0.45 - radius) / 0.45); // Núcleo con acento radiante
     }
 
     positions[i3] = x;
@@ -65,22 +64,14 @@ function generatePhoenixBuffers(totalCount: number) {
     randoms[i4 + 2] = isWing ? 1.0 : 0.0; // isWing
     randoms[i4 + 3] = 0.6 + pseudoRandom() * 1.0; // scale
 
-    // Gradiente térmico: ámbar/oro en el núcleo y puntas, púrpura/fucsia en la estela
-    if (tColor > 0.6) {
-      tempColor.lerpColors(fireColor, amberColor, (tColor - 0.6) / 0.4);
-    } else {
-      tempColor.lerpColors(purpleColor, magentaColor, tColor / 0.6);
-    }
-
-    colors[i3] = tempColor.r;
-    colors[i3 + 1] = tempColor.g;
-    colors[i3 + 2] = tempColor.b;
+    factors[i2] = colorMix;
+    factors[i2 + 1] = accentIntensity;
   }
 
-  return { positions, randoms, colors };
+  return { positions, randoms, factors };
 }
 
-const { positions: BASE_POS, randoms: RANDOMS, colors: BASE_COLORS } = generatePhoenixBuffers(DESKTOP_COUNT);
+const { positions: BASE_POS, randoms: RANDOMS, factors: FACTORS } = generatePhoenixBuffers(DESKTOP_COUNT);
 
 const particleVertexShader = `
   uniform float uTime;
@@ -89,15 +80,24 @@ const particleVertexShader = `
   uniform float uScroll;
   uniform vec2 uMouse;
   uniform float uPixelRatio;
+  uniform vec3 uColorPrimary;
+  uniform vec3 uColorSecondary;
+  uniform vec3 uColorAccent;
 
   attribute vec4 aRandom;
-  attribute vec3 aColor;
+  attribute vec2 aFactor; // [colorMix, accentIntensity]
 
   varying vec3 vColor;
   varying float vAlpha;
 
   void main() {
-    vColor = aColor;
+    float colorMix = aFactor.x;
+    float accentIntensity = aFactor.y;
+
+    // Síntesis de color dinámico en GPU según el espectro activo
+    vec3 baseColor = mix(uColorSecondary, uColorPrimary, colorMix);
+    vec3 particleColor = mix(baseColor, uColorAccent, pow(accentIntensity, 2.0));
+    vColor = particleColor;
 
     vec3 pos = position;
     float phase = aRandom.x;
@@ -179,15 +179,21 @@ export const ParticleConstellation: React.FC = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Colores activos según el modo de tema
+  const activeColors = useMemo(() => {
+    const paletteMap = isLight ? THEME_COLORS_LIGHT : THEME_COLORS_DARK;
+    return paletteMap[labParams.colorTheme] || paletteMap.cyan;
+  }, [isLight, labParams.colorTheme]);
+
   const geometry = useMemo(() => {
     const geom = new THREE.BufferGeometry();
     const posSlice = BASE_POS.slice(0, count * 3);
     const randSlice = RANDOMS.slice(0, count * 4);
-    const colSlice = BASE_COLORS.slice(0, count * 3);
+    const factSlice = FACTORS.slice(0, count * 2);
 
     geom.setAttribute('position', new THREE.BufferAttribute(posSlice, 3));
     geom.setAttribute('aRandom', new THREE.BufferAttribute(randSlice, 4));
-    geom.setAttribute('aColor', new THREE.BufferAttribute(colSlice, 3));
+    geom.setAttribute('aFactor', new THREE.BufferAttribute(factSlice, 2));
     return geom;
   }, [count]);
 
@@ -200,6 +206,9 @@ export const ParticleConstellation: React.FC = () => {
       uMouse: { value: new THREE.Vector2(0, 0) },
       uIsLight: { value: isLight ? 1.0 : 0.0 },
       uPixelRatio: { value: typeof window !== 'undefined' ? Math.min(window.devicePixelRatio, 2) : 1 },
+      uColorPrimary: { value: activeColors.primary },
+      uColorSecondary: { value: activeColors.secondary },
+      uColorAccent: { value: activeColors.accent },
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
@@ -214,6 +223,11 @@ export const ParticleConstellation: React.FC = () => {
     materialRef.current.uniforms.uScroll.value = scrollProgress;
     materialRef.current.uniforms.uIsLight.value = isLight ? 1.0 : 0.0;
     materialRef.current.uniforms.uMouse.value.lerp(globalMouseVector, 0.08);
+
+    // Actualizar colores dinámicamente en GPU según el tema activo
+    materialRef.current.uniforms.uColorPrimary.value.copy(activeColors.primary);
+    materialRef.current.uniforms.uColorSecondary.value.copy(activeColors.secondary);
+    materialRef.current.uniforms.uColorAccent.value.copy(activeColors.accent);
 
     // Rotación suave con inercia coordinada con la escultura central
     pointsRef.current.rotation.y = state.clock.elapsedTime * 0.08 + scrollProgress * Math.PI;

@@ -1,4 +1,4 @@
-import React, { Suspense, useState, useEffect, useRef } from 'react';
+import React, { Suspense, useState, useEffect, useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { MathematicalSculpture } from './MathematicalSculpture';
 import { ParticleConstellation } from './ParticleConstellation';
@@ -10,6 +10,7 @@ import * as THREE from 'three';
 
 const CursorPointLight: React.FC<{ isLight: boolean }> = ({ isLight }) => {
   const lightRef = useRef<THREE.PointLight>(null);
+  const labParams = usePortfolioStore((state) => state.labParams);
 
   useFrame(() => {
     if (!lightRef.current) return;
@@ -17,13 +18,23 @@ const CursorPointLight: React.FC<{ isLight: boolean }> = ({ isLight }) => {
     lightRef.current.position.y = THREE.MathUtils.lerp(lightRef.current.position.y, globalMouseVector.y * 3.5, 0.08);
   });
 
+  const activeLightColor = useMemo(() => {
+    switch (labParams.colorTheme) {
+      case 'cyan': return isLight ? '#0284c7' : '#38bdf8';
+      case 'violet': return isLight ? '#7c3aed' : '#c084fc';
+      case 'amber': return isLight ? '#d97706' : '#fbbf24';
+      case 'emerald': return isLight ? '#059669' : '#34d399';
+      default: return '#38bdf8';
+    }
+  }, [isLight, labParams.colorTheme]);
+
   return (
     <pointLight
       ref={lightRef}
       position={[0, 0, 3.8]}
-      intensity={isLight ? 1.4 : 2.2}
+      intensity={isLight ? 1.4 : 2.0}
       distance={14}
-      color={isLight ? '#f59e0b' : '#fbbf24'}
+      color={activeLightColor}
     />
   );
 };

@@ -13,11 +13,46 @@ const SURFACE_MODES: { id: SurfaceMode; label: string; formula: string }[] = [
   { id: 'klein', label: 'Atractor Caótico', formula: '\\chi = 0 \\text{ (Fénix Flow)}' },
 ];
 
-const COLOR_THEMES: { id: 'amber' | 'violet' | 'cyan' | 'emerald'; label: string; color: string }[] = [
-  { id: 'amber', label: 'Fuego Fénix', color: '#f59e0b' },
-  { id: 'violet', label: 'Violeta 357', color: '#a855f7' },
-  { id: 'cyan', label: 'Cian Cuántico', color: '#38bdf8' },
-  { id: 'emerald', label: 'Esmeralda Flux', color: '#10b981' },
+const COLOR_THEMES: {
+  id: 'cyan' | 'violet' | 'amber' | 'emerald';
+  label: string;
+  name: string;
+  color: string;
+  ringClass: string;
+  activeBg: string;
+}[] = [
+  {
+    id: 'cyan',
+    label: 'Cian Cuántico',
+    name: 'Cian',
+    color: '#38bdf8',
+    ringClass: 'border-cyan-500 dark:border-cyan-400 shadow-[0_0_14px_-2px_rgba(56,189,248,0.45)] ring-1 ring-cyan-400/50',
+    activeBg: 'bg-cyan-50/80 dark:bg-cyan-950/30',
+  },
+  {
+    id: 'violet',
+    label: 'Violeta Espectral',
+    name: 'Violeta',
+    color: '#a855f7',
+    ringClass: 'border-purple-500 dark:border-purple-400 shadow-[0_0_14px_-2px_rgba(168,85,247,0.45)] ring-1 ring-purple-400/50',
+    activeBg: 'bg-purple-50/80 dark:bg-purple-950/30',
+  },
+  {
+    id: 'amber',
+    label: 'Ámbar Resonante',
+    name: 'Ámbar',
+    color: '#f59e0b',
+    ringClass: 'border-amber-500 dark:border-amber-400 shadow-[0_0_14px_-2px_rgba(245,158,11,0.45)] ring-1 ring-amber-400/50',
+    activeBg: 'bg-amber-50/80 dark:bg-amber-950/30',
+  },
+  {
+    id: 'emerald',
+    label: 'Esmeralda Gaussiano',
+    name: 'Esmeralda',
+    color: '#10b981',
+    ringClass: 'border-emerald-500 dark:border-emerald-400 shadow-[0_0_14px_-2px_rgba(16,185,129,0.45)] ring-1 ring-emerald-400/50',
+    activeBg: 'bg-emerald-50/80 dark:bg-emerald-950/30',
+  },
 ];
 
 export const MathLabPanel: React.FC = () => {
@@ -243,26 +278,39 @@ export const MathLabPanel: React.FC = () => {
               Espectro Cromático
             </span>
             <div className="grid grid-cols-4 gap-2">
-              {COLOR_THEMES.map((theme) => (
-                <button
-                  key={theme.id}
-                  onClick={() => handleThemeChange(theme.id)}
-                  title={theme.label}
-                  className={`flex flex-col items-center justify-center gap-1.5 p-2 min-h-[44px] rounded-xl border transition-all cursor-pointer ${
-                    labParams.colorTheme === theme.id
-                      ? 'border-purple-500 dark:border-amber-400 bg-white dark:bg-[#251842] shadow-sm shadow-purple-500/20'
-                      : 'border-transparent bg-purple-50/50 dark:bg-[#1A1230]/40 hover:bg-purple-100/60 dark:hover:bg-[#251842]/50'
-                  }`}
-                >
-                  <span
-                    className="w-5 h-5 rounded-full shadow-inner ring-1 ring-black/10"
-                    style={{ backgroundColor: theme.color }}
-                  />
-                  <span className="text-xs text-slate-600 dark:text-slate-300 font-mono truncate max-w-full">
-                    {theme.label.split(' ')[0]}
-                  </span>
-                </button>
-              ))}
+              {COLOR_THEMES.map((theme) => {
+                const isActive = labParams.colorTheme === theme.id;
+                return (
+                  <button
+                    key={theme.id}
+                    onClick={() => handleThemeChange(theme.id)}
+                    title={theme.label}
+                    className={`flex flex-col items-center justify-center gap-1.5 p-2 min-h-[44px] rounded-xl border transition-all duration-200 cursor-pointer ${
+                      isActive
+                        ? `${theme.ringClass} ${theme.activeBg} scale-[1.03]`
+                        : 'border-transparent bg-purple-50/50 dark:bg-[#1A1230]/40 hover:bg-purple-100/60 dark:hover:bg-[#251842]/50 opacity-75 hover:opacity-100'
+                    }`}
+                  >
+                    <span
+                      className="w-5 h-5 rounded-full ring-2 ring-black/10 dark:ring-white/20 transition-all duration-200"
+                      style={{
+                        backgroundColor: theme.color,
+                        boxShadow: isActive ? `0 0 10px ${theme.color}` : 'none',
+                        transform: isActive ? 'scale(1.15)' : 'scale(1.0)',
+                      }}
+                    />
+                    <span
+                      className={`text-xs font-mono truncate max-w-full transition-colors ${
+                        isActive
+                          ? 'text-slate-900 dark:text-white font-bold'
+                          : 'text-slate-600 dark:text-slate-300'
+                      }`}
+                    >
+                      {theme.name}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
           </div>
 
