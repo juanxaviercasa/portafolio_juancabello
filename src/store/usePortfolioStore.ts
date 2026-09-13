@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 
 export type SurfaceMode = 'clifford' | 'fourier' | 'spherical' | 'klein';
+export type ThemeMode = 'dark' | 'light';
 
 export interface MathLabParams {
   surfaceMode: SurfaceMode;
@@ -13,6 +14,11 @@ export interface MathLabParams {
 }
 
 interface PortfolioState {
+  // Theme state
+  theme: ThemeMode;
+  toggleTheme: () => void;
+  setTheme: (theme: ThemeMode) => void;
+
   // Navigation & Scroll
   activeSection: string;
   scrollProgress: number; // 0 to 1
@@ -44,7 +50,57 @@ const defaultLabParams: MathLabParams = {
   soundModulation: false,
 };
 
+const getInitialTheme = (): ThemeMode => {
+  if (typeof window !== 'undefined') {
+    const saved = localStorage.getItem('portfolio_theme');
+    if (saved === 'light' || saved === 'dark') {
+      if (saved === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+      return saved;
+    }
+    // Check system preference fallback if needed, default to dark
+    const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+    const initial = prefersLight ? 'light' : 'dark';
+    if (initial === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    return initial;
+  }
+  return 'dark';
+};
+
 export const usePortfolioStore = create<PortfolioState>((set) => ({
+  theme: getInitialTheme(),
+  toggleTheme: () =>
+    set((state) => {
+      const nextTheme = state.theme === 'dark' ? 'light' : 'dark';
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('portfolio_theme', nextTheme);
+        if (nextTheme === 'dark') {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      }
+      return { theme: nextTheme };
+    }),
+  setTheme: (theme) => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('portfolio_theme', theme);
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    }
+    set({ theme });
+  },
+
   activeSection: 'hero',
   scrollProgress: 0,
   setActiveSection: (section) => set({ activeSection: section }),

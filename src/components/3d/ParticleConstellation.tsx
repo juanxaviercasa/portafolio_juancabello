@@ -1,50 +1,81 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useMemo, useRef, useEffect, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { usePortfolioStore } from '../../store/usePortfolioStore';
 import { globalMouseVector } from '../../utils/mouseTracker';
 
-const COUNT = 220;
+const DESKTOP_COUNT = 200;
+const MOBILE_COUNT = 75;
+
+// Generación determinista fuera del render para máxima pureza y rendimiento
+function generateParticleBuffers(totalCount: number) {
+  const pos = new Float32Array(totalCount * 3);
+  const offs = new Float32Array(totalCount * 3);
+
+  let seed = 1337;
+  const pseudoRandom = () => {
+    seed = (seed * 16807) % 2147483647;
+    return (seed - 1) / 2147483646;
+  };
+
+  for (let i = 0; i < totalCount; i++) {
+    const radius = 2.4 + pseudoRandom() * 3.2;
+    const theta = pseudoRandom() * Math.PI * 2;
+    const phi = Math.acos(pseudoRandom() * 2 - 1);
+
+    pos[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
+    pos[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+    pos[i * 3 + 2] = radius * Math.cos(phi);
+
+    offs[i * 3] = pseudoRandom() * Math.PI * 2;
+    offs[i * 3 + 1] = pseudoRandom() * Math.PI * 2;
+    offs[i * 3 + 2] = 0.3 + pseudoRandom() * 0.7;
+  }
+
+  return { pos, offs };
+}
+
+const { pos: BASE_POSITIONS, offs: OFFSETS } = generateParticleBuffers(DESKTOP_COUNT);
 
 export const ParticleConstellation: React.FC = () => {
   const meshRef = useRef<THREE.InstancedMesh>(null);
   const colorTheme = usePortfolioStore((state) => state.labParams.colorTheme);
+  const theme = usePortfolioStore((state) => state.theme);
+  const isLight = theme === 'light';
 
-  // Buffer de datos iniciales de las partículas (posiciones base y velocidades)
-  const [basePositions, offsets] = useMemo(() => {
-    const pos = new Float32Array(COUNT * 3);
-    const offs = new Float32Array(COUNT * 3);
+  const [count, setCount] = useState(DESKTOP_COUNT);
 
-    for (let i = 0; i < COUNT; i++) {
-      // Distribución esférica y toroidal alrededor de la escultura
-      const radius = 2.4 + Math.random() * 3.2;
-      const theta = Math.random() * Math.PI * 2;
-      const phi = Math.acos(Math.random() * 2 - 1);
-
-      pos[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
-      pos[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
-      pos[i * 3 + 2] = radius * Math.cos(phi);
-
-      offs[i * 3] = Math.random() * Math.PI * 2; // fase de oscilación X
-      offs[i * 3 + 1] = Math.random() * Math.PI * 2; // fase Y
-      offs[i * 3 + 2] = 0.3 + Math.random() * 0.7; // escala del punto
-    }
-
-    return [pos, offs];
+  useEffect(() => {
+    const handleResize = () => {
+      setCount(window.innerWidth < 640 ? MOBILE_COUNT : DESKTOP_COUNT);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const dummy = useMemo(() => new THREE.Object3D(), []);
 
-  // Color de las partículas según el tema
+  // Color de las partículas según el tema y modo oscuro/claro
   const particleColor = useMemo(() => {
-    switch (colorTheme) {
-      case 'cyan': return new THREE.Color('#38bdf8');
-      case 'violet': return new THREE.Color('#c084fc');
-      case 'amber': return new THREE.Color('#fbbf24');
-      case 'emerald': return new THREE.Color('#34d399');
-      default: return new THREE.Color('#38bdf8');
+    if (isLight) {
+      switch (colorTheme) {
+        case 'cyan': return new THREE.Color('#2563eb');
+        case 'violet': return new THREE.Color('#7c3aed');
+        case 'amber': return new THREE.Color('#d97706');
+        case 'emerald': return new THREE.Color('#059669');
+        default: return new THREE.Color('#2563eb');
+      }
+    } else {
+      switch (colorTheme) {
+        case 'cyan': return new THREE.Color('#38bdf8');
+        case 'violet': return new THREE.Color('#c084fc');
+        case 'amber': return new THREE.Color('#fbbf24');
+        case 'emerald': return new THREE.Color('#34d399');
+        default: return new THREE.Color('#38bdf8');
+      }
     }
-  }, [colorTheme]);
+  }, [colorTheme, isLight]);
 
   useFrame((state) => {
     if (!meshRef.current) return;
@@ -53,22 +84,21 @@ export const ParticleConstellation: React.FC = () => {
     const mouseX = globalMouseVector.x * 3.5;
     const mouseY = globalMouseVector.y * 3.5;
 
-    for (let i = 0; i < COUNT; i++) {
+    for (let i = 0; i < count; i++) {
       const idx = i * 3;
-      const baseX = basePositions[idx];
-      const baseY = basePositions[idx + 1];
-      const baseZ = basePositions[idx + 2];
+      const baseX = BASE_POSITIONS[idx];
+      const baseY = BASE_POSITIONS[idx + 1];
+      const baseZ = BASE_POSITIONS[idx + 2];
 
-      const phaseX = offsets[idx];
-      const phaseY = offsets[idx + 1];
-      const scaleBase = offsets[idx + 2];
+      const phaseX = OFFSETS[idx];
+      const phaseY = OFFSETS[idx + 1];
+      const scaleBase = OFFSETS[idx + 2];
 
-      // Oscilación armónica sutil
       let x = baseX + Math.sin(time + phaseX) * 0.25;
       let y = baseY + Math.cos(time + phaseY) * 0.25;
       let z = baseZ + Math.sin(time * 0.7 + phaseX + phaseY) * 0.2;
 
-      // Micro-gravedad y repulsión elástica por el cursor (Physics Playground pattern)
+      // Micro-gravedad y repulsión elástica por el cursor
       const dx = x - mouseX;
       const dy = y - mouseY;
       const distSq = dx * dx + dy * dy;
@@ -93,14 +123,14 @@ export const ParticleConstellation: React.FC = () => {
   return (
     <instancedMesh
       ref={meshRef}
-      args={[undefined, undefined, COUNT]}
+      args={[undefined, undefined, count]}
       frustumCulled={false}
     >
       <sphereGeometry args={[1, 8, 8]} />
       <meshBasicMaterial
         color={particleColor}
         transparent={true}
-        opacity={0.65}
+        opacity={isLight ? 0.75 : 0.65}
       />
     </instancedMesh>
   );

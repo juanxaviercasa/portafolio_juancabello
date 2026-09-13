@@ -8,15 +8,26 @@ import { AboutSection } from './components/sections/AboutSection';
 import { ContactSection } from './components/sections/ContactSection';
 import { Footer } from './components/ui/Footer';
 import { AudioToggle } from './components/ui/AudioToggle';
+import { ThemeToggle } from './components/ui/ThemeToggle';
 import { usePortfolioStore } from './store/usePortfolioStore';
 import { useAudioEngine } from './audio/useAudioEngine';
 
 export const App: React.FC = () => {
   const setScrollProgress = usePortfolioStore((state) => state.setScrollProgress);
   const setActiveSection = usePortfolioStore((state) => state.setActiveSection);
+  const theme = usePortfolioStore((state) => state.theme);
   const { playSectionTone } = useAudioEngine();
 
   const prevSectionRef = useRef<string>('hero');
+
+  // Asegurar sincronización reactiva de la clase .dark en el elemento HTML
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [theme]);
 
   // Sincronización del scroll para la orquestación 3D y audio de hitos
   useEffect(() => {
@@ -60,7 +71,7 @@ export const App: React.FC = () => {
   }, [setScrollProgress, setActiveSection, playSectionTone]);
 
   return (
-    <div className="relative min-h-screen text-slate-100 selection:bg-cyan-500/30 selection:text-cyan-200">
+    <div className="relative min-h-screen bg-[#F8FAFC] dark:bg-[#080B11] text-slate-900 dark:text-slate-100 selection:bg-blue-500/20 selection:text-blue-900 dark:selection:bg-cyan-500/30 dark:selection:text-cyan-200 transition-colors duration-300 overflow-x-hidden">
       {/* Capa 1: Escena 3D WebGL persistente en background */}
       <SceneContainer />
 
@@ -81,8 +92,11 @@ export const App: React.FC = () => {
         {/* Pie de Página */}
         <Footer />
 
-        {/* Botón flotante persistente de Audio */}
-        <AudioToggle variant="floating" />
+        {/* Dock flotante de controles persistentes: Selector de Tema + Audio */}
+        <div className="fixed bottom-6 right-6 z-40 flex items-center gap-2.5">
+          <ThemeToggle variant="floating" />
+          <AudioToggle variant="header" />
+        </div>
       </div>
     </div>
   );

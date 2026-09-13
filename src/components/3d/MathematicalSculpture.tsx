@@ -5,11 +5,11 @@ import { usePortfolioStore } from '../../store/usePortfolioStore';
 import { createCliffordTorusGeometry } from '../../utils/mathFormulas';
 import { globalMouseVector } from '../../utils/mouseTracker';
 
-// Color themes mapping
-const THEME_COLORS = {
+// Dark Mode color palettes
+const THEME_COLORS_DARK = {
   cyan: {
-    primary: new THREE.Color('#38bdf8'),
-    secondary: new THREE.Color('#6366f1'),
+    primary: new THREE.Color('#06b6d4'),
+    secondary: new THREE.Color('#3b82f6'),
     accent: new THREE.Color('#e0f2fe'),
   },
   violet: {
@@ -26,6 +26,30 @@ const THEME_COLORS = {
     primary: new THREE.Color('#10b981'),
     secondary: new THREE.Color('#06b6d4'),
     accent: new THREE.Color('#d1fae5'),
+  },
+};
+
+// Light Mode color palettes (richer saturation & contrast against #F8FAFC)
+const THEME_COLORS_LIGHT = {
+  cyan: {
+    primary: new THREE.Color('#2563eb'), // deep sapphire
+    secondary: new THREE.Color('#0284c7'), // technical cobalt
+    accent: new THREE.Color('#1d4ed8'),
+  },
+  violet: {
+    primary: new THREE.Color('#7c3aed'),
+    secondary: new THREE.Color('#db2777'),
+    accent: new THREE.Color('#6d28d9'),
+  },
+  amber: {
+    primary: new THREE.Color('#d97706'),
+    secondary: new THREE.Color('#b91c1c'),
+    accent: new THREE.Color('#b45309'),
+  },
+  emerald: {
+    primary: new THREE.Color('#059669'), // technical emerald
+    secondary: new THREE.Color('#2563eb'), // sapphire accent
+    accent: new THREE.Color('#047857'),
   },
 };
 
@@ -103,6 +127,7 @@ const fragmentShader = `
   uniform vec3 uColorAccent;
   uniform float uTime;
   uniform float uScroll;
+  uniform float uIsLight;
 
   varying vec3 vNormal;
   varying vec3 vPosition;
@@ -128,15 +153,23 @@ const fragmentShader = `
     vec3 reflectDir = reflect(-lightDir, normal);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.0) * 0.6;
 
-    // Combinación de colores: Base + Fresnel + Acento especular
-    vec3 finalColor = baseColor * diff;
-    finalColor += fresnel * uColorAccent * 1.2;
-    finalColor += spec * vec3(1.0);
+    vec3 finalColor;
 
-    // Sutil gradiente de profundidad dependiente del scroll
-    finalColor = mix(finalColor, uColorPrimary, uScroll * 0.25);
-
-    gl_FragColor = vec4(finalColor, 0.88);
+    if (uIsLight > 0.5) {
+      // MODO CLARO: Mayor densidad cromática, contraste nítido y reflejos limpios
+      finalColor = baseColor * (diff * 0.75 + 0.35);
+      finalColor += fresnel * uColorSecondary * 0.7;
+      finalColor += spec * vec3(0.9, 0.95, 1.0) * 0.5;
+      finalColor = mix(finalColor, uColorPrimary, uScroll * 0.15);
+      gl_FragColor = vec4(finalColor, 0.92);
+    } else {
+      // MODO OSCURO: Luminiscencia etérea con borde de Fresnel brillante
+      finalColor = baseColor * diff;
+      finalColor += fresnel * uColorAccent * 1.2;
+      finalColor += spec * vec3(1.0);
+      finalColor = mix(finalColor, uColorPrimary, uScroll * 0.25);
+      gl_FragColor = vec4(finalColor, 0.88);
+    }
   }
 `;
 
@@ -146,6 +179,9 @@ export const MathematicalSculpture: React.FC = () => {
 
   const labParams = usePortfolioStore((state) => state.labParams);
   const scrollProgress = usePortfolioStore((state) => state.scrollProgress);
+  const theme = usePortfolioStore((state) => state.theme);
+
+  const isLight = theme === 'light';
 
   // Mapear modo de superficie a índice numérico
   const modeIndex = useMemo(() => {
@@ -170,8 +206,11 @@ export const MathematicalSculpture: React.FC = () => {
     }
   }, [labParams.surfaceMode]);
 
-  // Colores activos
-  const activeColors = THEME_COLORS[labParams.colorTheme] || THEME_COLORS.cyan;
+  // Colores activos según el modo de tema
+  const activeColors = useMemo(() => {
+    const paletteMap = isLight ? THEME_COLORS_LIGHT : THEME_COLORS_DARK;
+    return paletteMap[labParams.colorTheme] || paletteMap.cyan;
+  }, [isLight, labParams.colorTheme]);
 
   // Uniforms del shader
   const uniforms = useMemo(
@@ -183,6 +222,7 @@ export const MathematicalSculpture: React.FC = () => {
       uScroll: { value: 0 },
       uMouse: { value: new THREE.Vector2(0, 0) },
       uMode: { value: modeIndex },
+      uIsLight: { value: isLight ? 1.0 : 0.0 },
       uColorPrimary: { value: activeColors.primary },
       uColorSecondary: { value: activeColors.secondary },
       uColorAccent: { value: activeColors.accent },
@@ -202,13 +242,14 @@ export const MathematicalSculpture: React.FC = () => {
     materialRef.current.uniforms.uAmplitude.value = labParams.amplitude;
     materialRef.current.uniforms.uMode.value = modeIndex;
     materialRef.current.uniforms.uScroll.value = scrollProgress;
+    materialRef.current.uniforms.uIsLight.value = isLight ? 1.0 : 0.0;
 
     // Mouse suavizado con lerp
     const targetX = globalMouseVector.x;
     const targetY = globalMouseVector.y;
     materialRef.current.uniforms.uMouse.value.lerp(globalMouseVector, 0.05);
 
-    // Actualizar colores si cambia el tema
+    // Actualizar colores si cambia el tema o paleta
     materialRef.current.uniforms.uColorPrimary.value.copy(activeColors.primary);
     materialRef.current.uniforms.uColorSecondary.value.copy(activeColors.secondary);
     materialRef.current.uniforms.uColorAccent.value.copy(activeColors.accent);

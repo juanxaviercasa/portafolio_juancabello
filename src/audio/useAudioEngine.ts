@@ -32,10 +32,22 @@ export function useAudioEngine() {
     [isAudioMuted]
   );
 
+  const activateAudio = useCallback(() => {
+    audioSynthesizer.resume();
+    audioSynthesizer.playActivationChime();
+    audioSynthesizer.startAmbientSoundscape();
+  }, []);
+
+  const deactivateAudio = useCallback(() => {
+    audioSynthesizer.stopAmbientSoundscape();
+  }, []);
+
   return {
     playTick,
     playSectionTone,
     playLabModulation,
+    activateAudio,
+    deactivateAudio,
     isMuted: isAudioMuted,
   };
 }
