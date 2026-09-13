@@ -125,6 +125,7 @@
 /* Smooth custom scrollbar Fénix 357 */
 ::-webkit-scrollbar {
   width: 7px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -151,6 +152,15 @@
 
 .dark ::-webkit-scrollbar-thumb:hover {
   background: #F59E0B;
+}
+
+/* Hide scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 /* Pulsating Purple Crystal Border */

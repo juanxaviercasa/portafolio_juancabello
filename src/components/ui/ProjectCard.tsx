@@ -27,7 +27,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
             <Sparkles className="w-3.5 h-3.5 text-amber-500" />
             {project.category}
           </span>
-          <span className="text-xs font-medium text-purple-900 dark:text-amber-200 bg-purple-50/80 dark:bg-[#1C1335] px-3 py-1.5 rounded-lg border border-purple-200 dark:border-purple-500/30 max-w-full overflow-x-auto shadow-sm">
+          <span className="text-xs font-medium text-purple-900 dark:text-amber-200 bg-purple-50/80 dark:bg-[#1C1335] px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg border border-purple-200 dark:border-purple-500/30 max-w-full overflow-hidden text-ellipsis shadow-sm select-none">
             <Latex math={project.mathConcept} />
           </span>
         </div>
