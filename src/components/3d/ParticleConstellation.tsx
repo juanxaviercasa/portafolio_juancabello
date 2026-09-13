@@ -80,8 +80,9 @@ const particleVertexShader = `
   uniform float uScroll;
   uniform vec2 uMouse;
   uniform float uPixelRatio;
+  uniform vec3 uColorShadow;
   uniform vec3 uColorPrimary;
-  uniform vec3 uColorSecondary;
+  uniform vec3 uColorHighlight;
   uniform vec3 uColorAccent;
 
   attribute vec4 aRandom;
@@ -94,9 +95,14 @@ const particleVertexShader = `
     float colorMix = aFactor.x;
     float accentIntensity = aFactor.y;
 
-    // Síntesis de color dinámico en GPU según el espectro activo
-    vec3 baseColor = mix(uColorSecondary, uColorPrimary, colorMix);
-    vec3 particleColor = mix(baseColor, uColorAccent, pow(accentIntensity, 2.0));
+    // Degradado monocromático en las partículas del color elegido (sin superposición)
+    vec3 pBase;
+    if (colorMix < 0.5) {
+      pBase = mix(uColorShadow, uColorPrimary, colorMix * 2.0);
+    } else {
+      pBase = mix(uColorPrimary, uColorHighlight, (colorMix - 0.5) * 2.0);
+    }
+    vec3 particleColor = mix(pBase, uColorAccent, pow(accentIntensity, 2.0));
     vColor = particleColor;
 
     vec3 pos = position;
@@ -206,8 +212,9 @@ export const ParticleConstellation: React.FC = () => {
       uMouse: { value: new THREE.Vector2(0, 0) },
       uIsLight: { value: isLight ? 1.0 : 0.0 },
       uPixelRatio: { value: typeof window !== 'undefined' ? Math.min(window.devicePixelRatio, 2) : 1 },
+      uColorShadow: { value: activeColors.shadow },
       uColorPrimary: { value: activeColors.primary },
-      uColorSecondary: { value: activeColors.secondary },
+      uColorHighlight: { value: activeColors.highlight },
       uColorAccent: { value: activeColors.accent },
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -225,8 +232,9 @@ export const ParticleConstellation: React.FC = () => {
     materialRef.current.uniforms.uMouse.value.lerp(globalMouseVector, 0.08);
 
     // Actualizar colores dinámicamente en GPU según el tema activo
+    materialRef.current.uniforms.uColorShadow.value.copy(activeColors.shadow);
     materialRef.current.uniforms.uColorPrimary.value.copy(activeColors.primary);
-    materialRef.current.uniforms.uColorSecondary.value.copy(activeColors.secondary);
+    materialRef.current.uniforms.uColorHighlight.value.copy(activeColors.highlight);
     materialRef.current.uniforms.uColorAccent.value.copy(activeColors.accent);
 
     // Rotación suave con inercia coordinada con la escultura central

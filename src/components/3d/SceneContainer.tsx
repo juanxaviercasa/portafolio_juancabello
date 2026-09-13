@@ -62,6 +62,28 @@ export const SceneContainer: React.FC = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  const labParams = usePortfolioStore((state) => state.labParams);
+
+  const fillLightColor = useMemo(() => {
+    switch (labParams.colorTheme) {
+      case 'cyan': return isLight ? '#0284c7' : '#06b6d4';
+      case 'violet': return isLight ? '#7c3aed' : '#8b5cf6';
+      case 'amber': return isLight ? '#d97706' : '#f59e0b';
+      case 'emerald': return isLight ? '#059669' : '#10b981';
+      default: return '#06b6d4';
+    }
+  }, [isLight, labParams.colorTheme]);
+
+  const rimLightColor = useMemo(() => {
+    switch (labParams.colorTheme) {
+      case 'cyan': return isLight ? '#38bdf8' : '#a5f3fc';
+      case 'violet': return isLight ? '#a855f7' : '#e9d5ff';
+      case 'amber': return isLight ? '#f59e0b' : '#fef3c7';
+      case 'emerald': return isLight ? '#10b981' : '#a7f3d0';
+      default: return '#a5f3fc';
+    }
+  }, [isLight, labParams.colorTheme]);
+
   if (!hasWebGL) {
     // Fallback elegante para entornos sin soporte WebGL
     return (
@@ -84,24 +106,24 @@ export const SceneContainer: React.FC = () => {
         className="w-full h-full"
       >
         <Suspense fallback={null}>
-          {/* Iluminación adaptativa Fénix 357 */}
+          {/* Iluminación adaptativa al color elegido */}
           <ambientLight intensity={isLight ? 0.8 : 0.45} />
           <directionalLight
             position={[5, 6, 4]}
             intensity={isLight ? 1.5 : 1.3}
-            color={isLight ? '#ffffff' : '#fef3c7'}
+            color="#ffffff"
           />
-          {/* Luz de relleno en violeta eléctrico */}
+          {/* Luz de relleno con tono degradado del color activo */}
           <pointLight
             position={[-4, -3, -2]}
-            intensity={isLight ? 1.0 : 1.2}
-            color={isLight ? '#7c3aed' : '#a855f7'}
+            intensity={isLight ? 0.9 : 1.1}
+            color={fillLightColor}
           />
-          {/* Luz de contorno en fucsia / amatista */}
+          {/* Luz de contorno con acento luminoso del color activo */}
           <pointLight
             position={[3, -4, 3]}
-            intensity={isLight ? 0.8 : 0.9}
-            color={isLight ? '#c026d3' : '#e879f9'}
+            intensity={isLight ? 0.7 : 0.8}
+            color={rimLightColor}
           />
           {/* Luz puntual dinámica del Fénix que sigue suavemente el cursor */}
           <CursorPointLight isLight={isLight} />

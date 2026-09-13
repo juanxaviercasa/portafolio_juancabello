@@ -3,55 +3,65 @@ import * as THREE from 'three';
 export type ColorThemeId = 'cyan' | 'violet' | 'amber' | 'emerald';
 
 export interface ThemePalette {
-  primary: THREE.Color;
-  secondary: THREE.Color;
-  accent: THREE.Color;
+  shadow: THREE.Color;    // Tono profundo / sombra del color elegido
+  primary: THREE.Color;   // Tono medio vibrante del color elegido
+  highlight: THREE.Color; // Tono luminoso / cresta del color elegido
+  accent: THREE.Color;    // Tono destello / fresnel más claro del color elegido
 }
 
-// Espectro cromático complementario para Modo Oscuro (sobre lienzo obsidiana Fénix #0B0813)
+// Espectro monocromático degradado para Modo Oscuro (sobre fondo obsidiana #0B0813)
+// Cada paleta utiliza exclusivamente tonos degradados del color seleccionado sin superposiciones
 export const THEME_COLORS_DARK: Record<ColorThemeId, ThemePalette> = {
   cyan: {
-    primary: new THREE.Color('#38bdf8'), // Cian Cuántico Eléctrico
-    secondary: new THREE.Color('#4f46e5'), // Índigo Cuántico Profundo
-    accent: new THREE.Color('#e0f2fe'), // Destello Hielo Cristalino
+    shadow: new THREE.Color('#083344'),    // Cian abisal profundo (Cyan 950)
+    primary: new THREE.Color('#06b6d4'),   // Cian eléctrico puro (Cyan 500)
+    highlight: new THREE.Color('#38bdf8'), // Cian luminoso brillante (Sky/Cyan 400)
+    accent: new THREE.Color('#a5f3fc'),    // Destello de hielo cian cristalino (Cyan 200)
   },
   violet: {
-    primary: new THREE.Color('#a855f7'), // Amatista Espectral Vívido
-    secondary: new THREE.Color('#ec4899'), // Magenta / Fucsia Neón
-    accent: new THREE.Color('#fae8ff'), // Halo Lavanda Cristalino
+    shadow: new THREE.Color('#3b0764'),    // Violeta abisal profundo (Purple 950)
+    primary: new THREE.Color('#8b5cf6'),   // Violeta puro espectral (Violet 500)
+    highlight: new THREE.Color('#c084fc'), // Violeta luminoso brillante (Purple 400)
+    accent: new THREE.Color('#e9d5ff'),    // Destello lavanda cristalino (Purple 200)
   },
   amber: {
-    primary: new THREE.Color('#f59e0b'), // Ámbar Resonante Incandescente
-    secondary: new THREE.Color('#ef4444'), // Fuego Fénix Carmesí
-    accent: new THREE.Color('#fef3c7'), // Corona Oro Blanco Caliente
+    shadow: new THREE.Color('#451a03'),    // Ámbar bronce abisal profundo (Amber 950)
+    primary: new THREE.Color('#f59e0b'),   // Ámbar solar puro (Amber 500)
+    highlight: new THREE.Color('#fbbf24'), // Ámbar dorado luminoso (Amber 400)
+    accent: new THREE.Color('#fef3c7'),    // Destello oro incandescente (Amber 100)
   },
   emerald: {
-    primary: new THREE.Color('#10b981'), // Esmeralda Gaussiano Aurora
-    secondary: new THREE.Color('#06b6d4'), // Turquesa Oceánico Cuántico
-    accent: new THREE.Color('#d1fae5'), // Menta Fosforescente Bioluminiscente
+    shadow: new THREE.Color('#022c22'),    // Esmeralda bosque abisal profundo (Emerald 950)
+    primary: new THREE.Color('#10b981'),   // Esmeralda puro vibrante (Emerald 500)
+    highlight: new THREE.Color('#34d399'), // Esmeralda luminoso brillante (Emerald 400)
+    accent: new THREE.Color('#a7f3d0'),    // Destello menta fosforescente (Emerald 200)
   },
 };
 
-// Espectro cromático de alto contraste para Modo Claro (sobre alabastro #F8F7FA)
+// Espectro monocromático degradado para Modo Claro (sobre alabastro #F8F7FA)
 export const THEME_COLORS_LIGHT: Record<ColorThemeId, ThemePalette> = {
   cyan: {
-    primary: new THREE.Color('#0284c7'), // Azul Zafiro Puro
-    secondary: new THREE.Color('#1d4ed8'), // Azul Real Cobalto
-    accent: new THREE.Color('#0369a1'), // Marino Profundo
+    shadow: new THREE.Color('#0e7490'),    // Cian oscuro profundo (Cyan 700)
+    primary: new THREE.Color('#0284c7'),   // Cian azul medio (Sky 600)
+    highlight: new THREE.Color('#38bdf8'), // Cian claro brillante (Sky 400)
+    accent: new THREE.Color('#bae6fd'),    // Brillo cian suave (Sky 200)
   },
   violet: {
-    primary: new THREE.Color('#7c3aed'), // Violeta Real
-    secondary: new THREE.Color('#c026d3'), // Orquídea Magenta
-    accent: new THREE.Color('#4c1d95'), // Amatista Púrpura Profundo
+    shadow: new THREE.Color('#581c87'),    // Violeta oscuro profundo (Purple 800)
+    primary: new THREE.Color('#7c3aed'),   // Violeta medio (Violet 600)
+    highlight: new THREE.Color('#a855f7'), // Violeta claro brillante (Purple 500)
+    accent: new THREE.Color('#e9d5ff'),    // Brillo lavanda suave (Purple 200)
   },
   amber: {
-    primary: new THREE.Color('#d97706'), // Ámbar Tostado Solar
-    secondary: new THREE.Color('#dc2626'), // Bermellón Cálido
-    accent: new THREE.Color('#78350f'), // Sepia Dorado
+    shadow: new THREE.Color('#78350f'),    // Ámbar oscuro profundo (Amber 800)
+    primary: new THREE.Color('#d97706'),   // Ámbar medio tostado (Amber 600)
+    highlight: new THREE.Color('#f59e0b'), // Ámbar claro brillante (Amber 500)
+    accent: new THREE.Color('#fde68a'),    // Brillo dorado suave (Amber 200)
   },
   emerald: {
-    primary: new THREE.Color('#059669'), // Jade Forestal Nítido
-    secondary: new THREE.Color('#0891b2'), // Teal Profundo
-    accent: new THREE.Color('#064e3b'), // Pino Botánico
+    shadow: new THREE.Color('#064e3b'),    // Esmeralda oscuro profundo (Emerald 800)
+    primary: new THREE.Color('#059669'),   // Esmeralda medio (Emerald 600)
+    highlight: new THREE.Color('#10b981'), // Esmeralda claro brillante (Emerald 500)
+    accent: new THREE.Color('#a7f3d0'),    // Brillo menta suave (Emerald 200)
   },
 };

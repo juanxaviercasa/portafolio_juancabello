@@ -85,8 +85,9 @@ const vertexShader = `
 `;
 
 const fragmentShader = `
+  uniform vec3 uColorShadow;
   uniform vec3 uColorPrimary;
-  uniform vec3 uColorSecondary;
+  uniform vec3 uColorHighlight;
   uniform vec3 uColorAccent;
   uniform float uTime;
   uniform float uScroll;
@@ -103,42 +104,48 @@ const fragmentShader = `
     vec3 normal = normalize(vNormal);
     vec3 viewDir = normalize(vViewPosition);
 
-    // Fresnel óptico para efecto de cristal de fuego iridiscente
-    float fresnel = pow(1.0 - max(dot(viewDir, normal), 0.0), 2.4);
+    // Factor de altura / desplazamiento normalizado de 0.0 a 1.0
+    float hFactor = clamp(vFlameIntensity, 0.0, 1.0);
 
-    // Gradiente térmico: violeta abisal en los valles -> ámbar/fuego incandescente en las crestas
-    float flameFactor = clamp(vFlameIntensity, 0.0, 1.0);
-    vec3 baseColor = mix(uColorSecondary, uColorPrimary, flameFactor);
+    // Degradado monocromático continuo del MISMO color elegido (sin superposición):
+    // 0.0 -> sombra profunda del color
+    // 0.5 -> cuerpo medio vibrante del color
+    // 1.0 -> cresta luminosa del color
+    vec3 baseColor;
+    if (hFactor < 0.5) {
+      baseColor = mix(uColorShadow, uColorPrimary, hFactor * 2.0);
+    } else {
+      baseColor = mix(uColorPrimary, uColorHighlight, (hFactor - 0.5) * 2.0);
+    }
 
-    // Destellos incandescentes en los vértices más calientes (Bloom selectivo)
-    vec3 hotGlow = mix(baseColor, uColorAccent, pow(flameFactor, 2.0));
-
-    // Iluminación difusa y especular
-    vec3 lightDir = normalize(vec3(1.2, 2.5, 3.2));
-    float diff = max(dot(normal, lightDir), 0.0) * 0.65 + 0.35;
+    // Iluminación difusa suave
+    vec3 lightDir = normalize(vec3(1.0, 2.2, 3.0));
+    float diff = max(dot(normal, lightDir), 0.0) * 0.6 + 0.4;
     
+    // Iluminación especular
     vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 28.0) * 0.75;
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 30.0) * 0.7;
+
+    // Fresnel óptico en los bordes con el tono acento del mismo color
+    float fresnel = pow(1.0 - max(dot(viewDir, normal), 0.0), 2.5);
 
     vec3 finalColor;
 
     if (uIsLight > 0.5) {
-      // MODO CLARO: Contraste nítido con reflejos dorados y amatista
-      finalColor = hotGlow * (diff * 0.75 + 0.35);
-      finalColor += fresnel * uColorPrimary * 0.8;
-      finalColor += spec * uColorAccent * 0.6;
-      finalColor = mix(finalColor, uColorAccent, uScroll * 0.15);
-      gl_FragColor = vec4(finalColor, 0.94);
+      // MODO CLARO: degradado nítido con alto contraste
+      finalColor = baseColor * (diff * 0.75 + 0.35);
+      finalColor += fresnel * uColorHighlight * 0.5;
+      finalColor += spec * uColorAccent * 0.4;
+      gl_FragColor = vec4(finalColor, 0.95);
     } else {
-      // MODO OSCURO: Bioluminiscencia espectral pura con corona nítida
-      finalColor = hotGlow * diff;
-      finalColor += fresnel * uColorAccent * 1.5;
-      finalColor += spec * vec3(1.0);
+      // MODO OSCURO: bioluminiscencia pura del color seleccionado
+      finalColor = baseColor * diff;
+      finalColor += fresnel * uColorAccent * 1.35;
+      finalColor += spec * uColorHighlight * 0.75;
       // Pulso armónico sutil
-      float pulse = 0.95 + 0.05 * sin(uTime * 2.0);
+      float pulse = 0.96 + 0.04 * sin(uTime * 2.0);
       finalColor *= pulse;
-      finalColor = mix(finalColor, uColorPrimary, uScroll * 0.25);
-      gl_FragColor = vec4(finalColor, 0.90);
+      gl_FragColor = vec4(finalColor, 0.92);
     }
   }
 `;
@@ -193,8 +200,9 @@ export const MathematicalSculpture: React.FC = () => {
       uMouse: { value: new THREE.Vector2(0, 0) },
       uMode: { value: modeIndex },
       uIsLight: { value: isLight ? 1.0 : 0.0 },
+      uColorShadow: { value: activeColors.shadow },
       uColorPrimary: { value: activeColors.primary },
-      uColorSecondary: { value: activeColors.secondary },
+      uColorHighlight: { value: activeColors.highlight },
       uColorAccent: { value: activeColors.accent },
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -219,9 +227,10 @@ export const MathematicalSculpture: React.FC = () => {
     const targetY = globalMouseVector.y;
     materialRef.current.uniforms.uMouse.value.lerp(globalMouseVector, 0.06);
 
-    // Actualizar colores si cambia el tema o paleta
+    // Actualizar colores del degradado monocromático en GPU
+    materialRef.current.uniforms.uColorShadow.value.copy(activeColors.shadow);
     materialRef.current.uniforms.uColorPrimary.value.copy(activeColors.primary);
-    materialRef.current.uniforms.uColorSecondary.value.copy(activeColors.secondary);
+    materialRef.current.uniforms.uColorHighlight.value.copy(activeColors.highlight);
     materialRef.current.uniforms.uColorAccent.value.copy(activeColors.accent);
 
     // Rotación suave con inercia del Fénix
