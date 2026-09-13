@@ -13,6 +13,13 @@ export interface MathLabParams {
   soundModulation: boolean;
 }
 
+export type ConcertFrequency = 432 | 528 | 396 | 639;
+
+export interface AudioSettings {
+  fundamentalFreq: ConcertFrequency;
+  isConcertMode: boolean; // Modo concierto con orquestación melódica neoclásica
+}
+
 interface PortfolioState {
   // Theme state
   theme: ThemeMode;
@@ -29,6 +36,9 @@ interface PortfolioState {
   isAudioMuted: boolean;
   toggleAudio: () => void;
   setAudioMuted: (muted: boolean) => void;
+  audioSettings: AudioSettings;
+  setFundamentalFreq: (freq: ConcertFrequency) => void;
+  toggleConcertMode: () => void;
 
   // 3D Math Lab Parameters
   labParams: MathLabParams;
@@ -121,6 +131,18 @@ export const usePortfolioStore = create<PortfolioState>((set) => ({
     }
     set({ isAudioMuted: muted });
   },
+  audioSettings: {
+    fundamentalFreq: 432,
+    isConcertMode: true,
+  },
+  setFundamentalFreq: (freq) =>
+    set((state) => ({
+      audioSettings: { ...state.audioSettings, fundamentalFreq: freq },
+    })),
+  toggleConcertMode: () =>
+    set((state) => ({
+      audioSettings: { ...state.audioSettings, isConcertMode: !state.audioSettings.isConcertMode },
+    })),
 
   labParams: { ...defaultLabParams },
   setLabParam: (key, value) =>

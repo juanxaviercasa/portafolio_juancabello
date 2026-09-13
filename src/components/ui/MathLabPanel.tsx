@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Sliders, RotateCcw, Eye, Sparkles, Volume2, ChevronDown, ChevronUp } from 'lucide-react';
+import { Sliders, RotateCcw, Eye, Sparkles, Volume2, ChevronDown, ChevronUp, Music } from 'lucide-react';
 import { usePortfolioStore } from '../../store/usePortfolioStore';
-import type { SurfaceMode } from '../../store/usePortfolioStore';
+import type { SurfaceMode, ConcertFrequency } from '../../store/usePortfolioStore';
 import { useAudioEngine } from '../../audio/useAudioEngine';
+import { SACRED_FREQUENCIES } from '../../audio/AudioSynthesizer';
 import { GlassCard } from './GlassCard';
 import { Latex } from './Latex';
 
@@ -11,6 +12,19 @@ const SURFACE_MODES: { id: SurfaceMode; label: string; formula: string }[] = [
   { id: 'fourier', label: 'Onda Fourier 357', formula: '\\sum_{k=1}^n \\frac{1}{k}\\sin(kx)' },
   { id: 'spherical', label: 'Plasma Armónico', formula: 'Y_l^m(\\theta, \\phi)' },
   { id: 'klein', label: 'Atractor Caótico', formula: '\\chi = 0 \\text{ (Fénix Flow)}' },
+];
+
+const FREQUENCIES_LIST: {
+  freq: ConcertFrequency;
+  name: string;
+  note: string;
+  tag: string;
+  description: string;
+}[] = [
+  { freq: 432, name: '432 Hz', note: 'La (A4)', tag: 'Pitagórica', description: 'Armonía Áurea & Verdi' },
+  { freq: 528, name: '528 Hz', note: 'Do (C5)', tag: 'Milagro', description: 'Geometría del ADN' },
+  { freq: 396, name: '396 Hz', note: 'Sol (G4)', tag: 'Telúrica', description: 'Liberación & Calma' },
+  { freq: 639, name: '639 Hz', note: 'Mi (E5)', tag: 'Cuántica', description: 'Resonancia & Conexión' },
 ];
 
 const COLOR_THEMES: {
@@ -62,7 +76,16 @@ export const MathLabPanel: React.FC = () => {
   const setLabParam = usePortfolioStore((state) => state.setLabParam);
   const resetLabParams = usePortfolioStore((state) => state.resetLabParams);
   const isAudioMuted = usePortfolioStore((state) => state.isAudioMuted);
-  const { playTick, playLabModulation } = useAudioEngine();
+  const toggleAudio = usePortfolioStore((state) => state.toggleAudio);
+  const {
+    playTick,
+    playLabModulation,
+    changeFrequency,
+    toggleConcertMode,
+    activateAudio,
+    deactivateAudio,
+    audioSettings,
+  } = useAudioEngine();
 
   const handleHarmonicsChange = (value: number) => {
     setLabParam('harmonics', value);
@@ -124,17 +147,31 @@ export const MathLabPanel: React.FC = () => {
             {isMobileCollapsed ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
           </button>
 
-          {/* Indicador de Sonificación */}
-          <div
-            className={`hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-mono border transition-colors ${
+          {/* Indicador y Switch de Concierto Armónico */}
+          <button
+            onClick={() => {
+              if (isAudioMuted) {
+                activateAudio();
+                toggleAudio();
+              } else {
+                deactivateAudio();
+                toggleAudio();
+              }
+            }}
+            title={!isAudioMuted ? 'Hacer clic para pausar el concierto' : 'Hacer clic para activar el concierto'}
+            className={`hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-mono border transition-all cursor-pointer ${
               !isAudioMuted
-                ? 'bg-amber-500/10 dark:bg-amber-500/15 border-amber-500/30 text-amber-700 dark:text-amber-300'
-                : 'bg-purple-50 dark:bg-[#1A1230] border-purple-200 dark:border-purple-500/20 text-slate-400'
+                ? 'bg-amber-500/10 dark:bg-amber-500/15 border-amber-500/30 text-amber-700 dark:text-amber-300 shadow-sm'
+                : 'bg-purple-50 dark:bg-[#1A1230] border-purple-200 dark:border-purple-500/20 text-slate-400 hover:text-purple-600 dark:hover:text-purple-300'
             }`}
           >
             <Volume2 className={`w-3.5 h-3.5 ${!isAudioMuted ? 'animate-pulse text-amber-500' : ''}`} />
-            <span>{!isAudioMuted ? 'Sonificación 432Hz Activa' : 'Audio Silenciado'}</span>
-          </div>
+            <span>
+              {!isAudioMuted
+                ? `Concierto ${audioSettings.fundamentalFreq}Hz ${audioSettings.isConcertMode ? 'Neoclásico' : 'Armónico'}`
+                : 'Concierto en Pausa'}
+            </span>
+          </button>
 
           {/* Botón Reset */}
           <button
@@ -314,13 +351,134 @@ export const MathLabPanel: React.FC = () => {
             </div>
           </div>
 
-          {/* Notificación de audio activo */}
-          {!isAudioMuted && (
-            <div className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-500/20 text-purple-900 dark:text-amber-300 text-xs leading-relaxed">
-              <Volume2 className="w-4 h-4 flex-shrink-0 animate-pulse text-amber-500" />
-              <span>Sonificación procedural activa: cada armónico modula un oscilador web nativo.</span>
+        </div>
+
+        {/* Sección de Orquestación Armónica & Frecuencias Sagradas (Concierto Nueva Era) */}
+        <div className="md:col-span-3 pt-4 border-t border-purple-200/70 dark:border-purple-500/20">
+          <div className="p-4 sm:p-5 rounded-2xl bg-purple-50/70 dark:bg-[#1A1230]/70 border border-purple-200/80 dark:border-purple-500/30 space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-gradient-to-br from-amber-500/20 to-purple-500/20 border border-amber-500/30 text-amber-500 shadow-sm">
+                  <Music className="w-5 h-5 animate-pulse" />
+                </div>
+                <div>
+                  <h4 className="text-sm sm:text-base font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                    <span>Orquestación Armónica // Concierto Nueva Era</span>
+                    {!isAudioMuted && (
+                      <span className="flex h-2 w-2 relative">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                      </span>
+                    )}
+                  </h4>
+                  <p className="text-xs text-slate-600 dark:text-slate-300">
+                    Sinfonía procedural en tiempo real: frecuencias sagradas, arpegios de piano de cristal y cuerdas etéreas.
+                  </p>
+                </div>
+              </div>
+
+              {/* Botón Melodía Neoclásica ON/OFF & Estado */}
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    if (isAudioMuted) {
+                      activateAudio();
+                      toggleAudio();
+                    } else {
+                      toggleConcertMode();
+                    }
+                  }}
+                  className={`flex items-center gap-2 px-3.5 py-2 min-h-[40px] rounded-xl text-xs font-mono font-semibold transition-all border cursor-pointer ${
+                    !isAudioMuted && audioSettings.isConcertMode
+                      ? 'bg-gradient-to-r from-purple-600/20 to-amber-500/20 border-amber-500/50 text-amber-600 dark:text-amber-300 shadow-sm ring-1 ring-amber-400/40'
+                      : 'bg-white/60 dark:bg-[#251842]/50 border-purple-200/60 dark:border-purple-500/30 text-slate-500 dark:text-slate-400 hover:text-purple-700 dark:hover:text-purple-300'
+                  }`}
+                  title={audioSettings.isConcertMode ? 'Modo Concierto activo (Piano de cristal neoclásico + Cuerdas)' : 'Modo Contemplativo (Drone armónico puro)'}
+                >
+                  <Sparkles className={`w-3.5 h-3.5 ${!isAudioMuted && audioSettings.isConcertMode ? 'text-amber-500 animate-spin' : ''}`} />
+                  <span>{audioSettings.isConcertMode ? 'Melodía de Cristal: ON' : 'Melodía de Cristal: OFF'}</span>
+                </button>
+              </div>
             </div>
-          )}
+
+            {/* Grid de 4 Frecuencias Sagradas */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+              {FREQUENCIES_LIST.map((item) => {
+                const isActive = audioSettings.fundamentalFreq === item.freq;
+                return (
+                  <button
+                    key={item.freq}
+                    onClick={() => {
+                      if (isAudioMuted) {
+                        changeFrequency(item.freq);
+                        activateAudio();
+                        toggleAudio();
+                      } else {
+                        changeFrequency(item.freq);
+                      }
+                    }}
+                    title={`${item.name} (${item.note}) — ${item.description}`}
+                    className={`flex flex-col items-start p-3 min-h-[64px] rounded-xl border transition-all text-left cursor-pointer relative overflow-hidden ${
+                      isActive
+                        ? 'border-amber-500 dark:border-amber-400 bg-white dark:bg-[#251842] shadow-md shadow-amber-500/20 ring-1 ring-amber-400/50'
+                        : 'border-purple-200/60 dark:border-purple-500/20 bg-white/50 dark:bg-[#1E1538]/50 hover:bg-white dark:hover:bg-[#251842] text-slate-600 dark:text-slate-400'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between w-full mb-1">
+                      <span className={`text-sm font-mono font-bold ${isActive ? 'text-amber-600 dark:text-amber-300' : 'text-slate-900 dark:text-slate-100'}`}>
+                        {item.name}
+                      </span>
+                      <span className={`text-[10px] font-mono px-2 py-0.5 rounded-md font-semibold ${
+                        isActive
+                          ? 'bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/40'
+                          : 'bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300'
+                      }`}>
+                        {item.tag}
+                      </span>
+                    </div>
+                    <span className="text-xs text-slate-600 dark:text-slate-300 font-medium">
+                      {item.note}
+                    </span>
+                    <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 truncate max-w-full">
+                      {item.description}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Barra informativa inferior del concierto */}
+            <div className="flex flex-wrap items-center justify-between text-xs font-mono pt-2 border-t border-purple-200/50 dark:border-purple-500/20 gap-2">
+              <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
+                <span className="font-semibold text-purple-700 dark:text-amber-300">
+                  {SACRED_FREQUENCIES[audioSettings.fundamentalFreq]?.name} ({SACRED_FREQUENCIES[audioSettings.fundamentalFreq]?.subtitle}):
+                </span>
+                <span className="hidden md:inline text-slate-500 dark:text-slate-400">
+                  {SACRED_FREQUENCIES[audioSettings.fundamentalFreq]?.scaleDescription}
+                </span>
+              </div>
+
+              <div>
+                {!isAudioMuted ? (
+                  <span className="text-amber-600 dark:text-amber-400 font-semibold flex items-center gap-1.5">
+                    <Volume2 className="w-3.5 h-3.5 animate-pulse" />
+                    <span>Sonando en Vivo ({audioSettings.isConcertMode ? 'Concierto Clásico Nueva Era' : 'Drone de Cuerdas'})</span>
+                  </span>
+                ) : (
+                  <button
+                    onClick={() => {
+                      activateAudio();
+                      toggleAudio();
+                    }}
+                    className="text-purple-700 dark:text-amber-300 font-semibold hover:underline flex items-center gap-1 cursor-pointer"
+                  >
+                    <Volume2 className="w-3.5 h-3.5" />
+                    <span>Iniciar Concierto en Vivo</span>
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </GlassCard>
