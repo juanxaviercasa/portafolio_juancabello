@@ -4,42 +4,167 @@ import * as THREE from 'three';
 import { usePortfolioStore } from '../../store/usePortfolioStore';
 import { globalMouseVector } from '../../utils/mouseTracker';
 
-const DESKTOP_COUNT = 200;
-const MOBILE_COUNT = 75;
+const DESKTOP_COUNT = 3500;
+const MOBILE_COUNT = 1500;
 
-// Generación determinista fuera del render para máxima pureza y rendimiento
-function generateParticleBuffers(totalCount: number) {
-  const pos = new Float32Array(totalCount * 3);
-  const offs = new Float32Array(totalCount * 3);
+// Generación determinista de las posiciones del Enjambre Fénix (Alas fractales y llama central)
+function generatePhoenixBuffers(totalCount: number) {
+  const positions = new Float32Array(totalCount * 3);
+  const randoms = new Float32Array(totalCount * 4); // [phase, speed, wingFactor, scale]
+  const colors = new Float32Array(totalCount * 3);
 
-  let seed = 1337;
+  let seed = 35711;
   const pseudoRandom = () => {
     seed = (seed * 16807) % 2147483647;
     return (seed - 1) / 2147483646;
   };
 
+  const amberColor = new THREE.Color('#fbbf24');
+  const fireColor = new THREE.Color('#f59e0b');
+  const magentaColor = new THREE.Color('#e879f9');
+  const purpleColor = new THREE.Color('#a855f7');
+  const tempColor = new THREE.Color();
+
   for (let i = 0; i < totalCount; i++) {
-    const radius = 2.4 + pseudoRandom() * 3.2;
-    const theta = pseudoRandom() * Math.PI * 2;
-    const phi = Math.acos(pseudoRandom() * 2 - 1);
+    const i3 = i * 3;
+    const i4 = i * 4;
 
-    pos[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
-    pos[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
-    pos[i * 3 + 2] = radius * Math.cos(phi);
+    // Distribución alada del Fénix: 65% alas paramétricas, 35% columna de llama central
+    const isWing = pseudoRandom() < 0.68;
+    let x = 0, y = 0, z = 0;
+    let tColor = 0;
 
-    offs[i * 3] = pseudoRandom() * Math.PI * 2;
-    offs[i * 3 + 1] = pseudoRandom() * Math.PI * 2;
-    offs[i * 3 + 2] = 0.3 + pseudoRandom() * 0.7;
+    if (isWing) {
+      // Alas abiertas en abanico helicoidal
+      const side = pseudoRandom() > 0.5 ? 1 : -1;
+      const span = 0.5 + pseudoRandom() * 2.6;
+      const angle = (pseudoRandom() - 0.5) * 1.4;
+      
+      x = side * (span * Math.cos(angle) + 0.3);
+      y = span * Math.sin(angle) * 0.7 + (pseudoRandom() - 0.5) * 0.9;
+      z = (pseudoRandom() - 0.5) * 1.2 + Math.sin(span * 2.0) * 0.4;
+      tColor = span / 3.0; // Puntas de las alas más calientes / doradas
+    } else {
+      // Columna de fuego y ascensión térmica central
+      const height = (pseudoRandom() - 0.5) * 3.6;
+      const radius = (0.2 + pseudoRandom() * 0.8) * (1.2 - Math.abs(height) * 0.2);
+      const theta = pseudoRandom() * Math.PI * 2;
+
+      x = radius * Math.cos(theta);
+      y = height;
+      z = radius * Math.sin(theta);
+      tColor = 1.0 - Math.abs(height) / 2.0;
+    }
+
+    positions[i3] = x;
+    positions[i3 + 1] = y;
+    positions[i3 + 2] = z;
+
+    randoms[i4] = pseudoRandom() * Math.PI * 2; // phase
+    randoms[i4 + 1] = 0.6 + pseudoRandom() * 1.2; // speed
+    randoms[i4 + 2] = isWing ? 1.0 : 0.0; // isWing
+    randoms[i4 + 3] = 0.6 + pseudoRandom() * 1.0; // scale
+
+    // Gradiente térmico: ámbar/oro en el núcleo y puntas, púrpura/fucsia en la estela
+    if (tColor > 0.6) {
+      tempColor.lerpColors(fireColor, amberColor, (tColor - 0.6) / 0.4);
+    } else {
+      tempColor.lerpColors(purpleColor, magentaColor, tColor / 0.6);
+    }
+
+    colors[i3] = tempColor.r;
+    colors[i3 + 1] = tempColor.g;
+    colors[i3 + 2] = tempColor.b;
   }
 
-  return { pos, offs };
+  return { positions, randoms, colors };
 }
 
-const { pos: BASE_POSITIONS, offs: OFFSETS } = generateParticleBuffers(DESKTOP_COUNT);
+const { positions: BASE_POS, randoms: RANDOMS, colors: BASE_COLORS } = generatePhoenixBuffers(DESKTOP_COUNT);
+
+const particleVertexShader = `
+  uniform float uTime;
+  uniform float uSpeed;
+  uniform float uHarmonics;
+  uniform float uScroll;
+  uniform vec2 uMouse;
+  uniform float uPixelRatio;
+
+  attribute vec4 aRandom;
+  attribute vec3 aColor;
+
+  varying vec3 vColor;
+  varying float vAlpha;
+
+  void main() {
+    vColor = aColor;
+
+    vec3 pos = position;
+    float phase = aRandom.x;
+    float pSpeed = aRandom.y * uSpeed;
+    float isWing = aRandom.z;
+    float pScale = aRandom.w;
+
+    float t = uTime * pSpeed * 0.8;
+
+    // Batir de alas de energía y remolino caótico del Fénix
+    if (isWing > 0.5) {
+      float flap = sin(t * 2.2 + abs(pos.x) * 1.6 + phase) * 0.35 * (abs(pos.x) * 0.6);
+      pos.y += flap;
+      pos.z += cos(t * 1.8 + phase) * 0.2;
+    } else {
+      // Ascensión de chispas
+      pos.y += sin(t * 2.5 + phase) * 0.35;
+      pos.x += cos(t * 1.6 + pos.y * 2.0) * 0.15;
+    }
+
+    // Interacción dinámica con el mouse (repulsión magnética)
+    vec2 mDiff = pos.xy - uMouse * 2.8;
+    float mDist = length(mDiff);
+    if (mDist < 2.2) {
+      float force = (2.2 - mDist) * 0.35;
+      pos.xy += normalize(mDiff) * force;
+    }
+
+    vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
+    gl_Position = projectionMatrix * mvPosition;
+
+    // Atenuación de tamaño por distancia de cámara y pulsación armónica
+    float harmonicPulse = 1.0 + sin(uTime * 3.0 + phase) * 0.3;
+    gl_PointSize = (18.0 * pScale * harmonicPulse * uPixelRatio) / -mvPosition.z;
+
+    vAlpha = smoothstep(0.1, 0.4, pScale);
+  }
+`;
+
+const particleFragmentShader = `
+  varying vec3 vColor;
+  varying float vAlpha;
+  uniform float uIsLight;
+
+  void main() {
+    // Partícula esférica con halo suave y decaimiento radial
+    vec2 coord = gl_PointCoord - vec2(0.5);
+    float dist = length(coord);
+    if (dist > 0.5) discard;
+
+    float intensity = smoothstep(0.5, 0.05, dist);
+    // Destello interior incandescente
+    float core = smoothstep(0.2, 0.0, dist) * 0.5;
+
+    vec3 finalColor = vColor + vec3(core);
+
+    float alpha = intensity * (uIsLight > 0.5 ? 0.75 : 0.85);
+    gl_FragColor = vec4(finalColor, alpha);
+  }
+`;
 
 export const ParticleConstellation: React.FC = () => {
-  const meshRef = useRef<THREE.InstancedMesh>(null);
-  const colorTheme = usePortfolioStore((state) => state.labParams.colorTheme);
+  const pointsRef = useRef<THREE.Points>(null);
+  const materialRef = useRef<THREE.ShaderMaterial>(null);
+
+  const labParams = usePortfolioStore((state) => state.labParams);
+  const scrollProgress = usePortfolioStore((state) => state.scrollProgress);
   const theme = usePortfolioStore((state) => state.theme);
   const isLight = theme === 'light';
 
@@ -54,84 +179,58 @@ export const ParticleConstellation: React.FC = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const dummy = useMemo(() => new THREE.Object3D(), []);
+  const geometry = useMemo(() => {
+    const geom = new THREE.BufferGeometry();
+    const posSlice = BASE_POS.slice(0, count * 3);
+    const randSlice = RANDOMS.slice(0, count * 4);
+    const colSlice = BASE_COLORS.slice(0, count * 3);
 
-  // Color de las partículas según el tema y modo oscuro/claro
-  const particleColor = useMemo(() => {
-    if (isLight) {
-      switch (colorTheme) {
-        case 'cyan': return new THREE.Color('#2563eb');
-        case 'violet': return new THREE.Color('#7c3aed');
-        case 'amber': return new THREE.Color('#d97706');
-        case 'emerald': return new THREE.Color('#059669');
-        default: return new THREE.Color('#2563eb');
-      }
-    } else {
-      switch (colorTheme) {
-        case 'cyan': return new THREE.Color('#38bdf8');
-        case 'violet': return new THREE.Color('#c084fc');
-        case 'amber': return new THREE.Color('#fbbf24');
-        case 'emerald': return new THREE.Color('#34d399');
-        default: return new THREE.Color('#38bdf8');
-      }
-    }
-  }, [colorTheme, isLight]);
+    geom.setAttribute('position', new THREE.BufferAttribute(posSlice, 3));
+    geom.setAttribute('aRandom', new THREE.BufferAttribute(randSlice, 4));
+    geom.setAttribute('aColor', new THREE.BufferAttribute(colSlice, 3));
+    return geom;
+  }, [count]);
 
-  useFrame((state) => {
-    if (!meshRef.current) return;
+  const uniforms = useMemo(
+    () => ({
+      uTime: { value: 0 },
+      uSpeed: { value: labParams.speed },
+      uHarmonics: { value: labParams.harmonics },
+      uScroll: { value: 0 },
+      uMouse: { value: new THREE.Vector2(0, 0) },
+      uIsLight: { value: isLight ? 1.0 : 0.0 },
+      uPixelRatio: { value: typeof window !== 'undefined' ? Math.min(window.devicePixelRatio, 2) : 1 },
+    }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
 
-    const time = state.clock.elapsedTime * 0.4;
-    const mouseX = globalMouseVector.x * 3.5;
-    const mouseY = globalMouseVector.y * 3.5;
+  useFrame((state, delta) => {
+    if (!materialRef.current || !pointsRef.current) return;
 
-    for (let i = 0; i < count; i++) {
-      const idx = i * 3;
-      const baseX = BASE_POSITIONS[idx];
-      const baseY = BASE_POSITIONS[idx + 1];
-      const baseZ = BASE_POSITIONS[idx + 2];
+    materialRef.current.uniforms.uTime.value += delta;
+    materialRef.current.uniforms.uSpeed.value = labParams.speed;
+    materialRef.current.uniforms.uHarmonics.value = labParams.harmonics;
+    materialRef.current.uniforms.uScroll.value = scrollProgress;
+    materialRef.current.uniforms.uIsLight.value = isLight ? 1.0 : 0.0;
+    materialRef.current.uniforms.uMouse.value.lerp(globalMouseVector, 0.08);
 
-      const phaseX = OFFSETS[idx];
-      const phaseY = OFFSETS[idx + 1];
-      const scaleBase = OFFSETS[idx + 2];
-
-      let x = baseX + Math.sin(time + phaseX) * 0.25;
-      let y = baseY + Math.cos(time + phaseY) * 0.25;
-      let z = baseZ + Math.sin(time * 0.7 + phaseX + phaseY) * 0.2;
-
-      // Micro-gravedad y repulsión elástica por el cursor
-      const dx = x - mouseX;
-      const dy = y - mouseY;
-      const distSq = dx * dx + dy * dy;
-
-      if (distSq < 4.0) {
-        const force = (4.0 - distSq) * 0.18;
-        x += dx * force;
-        y += dy * force;
-      }
-
-      dummy.position.set(x, y, z);
-      const s = scaleBase * (0.028 + Math.sin(time * 2.0 + phaseX) * 0.008);
-      dummy.scale.set(s, s, s);
-      dummy.updateMatrix();
-
-      meshRef.current.setMatrixAt(i, dummy.matrix);
-    }
-
-    meshRef.current.instanceMatrix.needsUpdate = true;
+    // Rotación suave con inercia coordinada con la escultura central
+    pointsRef.current.rotation.y = state.clock.elapsedTime * 0.08 + scrollProgress * Math.PI;
+    pointsRef.current.rotation.x = scrollProgress * 0.5;
   });
 
   return (
-    <instancedMesh
-      ref={meshRef}
-      args={[undefined, undefined, count]}
-      frustumCulled={false}
-    >
-      <sphereGeometry args={[1, 8, 8]} />
-      <meshBasicMaterial
-        color={particleColor}
+    <points ref={pointsRef} geometry={geometry}>
+      <shaderMaterial
+        ref={materialRef}
+        vertexShader={particleVertexShader}
+        fragmentShader={particleFragmentShader}
+        uniforms={uniforms}
         transparent={true}
-        opacity={isLight ? 0.75 : 0.65}
+        depthWrite={false}
+        blending={THREE.AdditiveBlending}
       />
-    </instancedMesh>
+    </points>
   );
 };

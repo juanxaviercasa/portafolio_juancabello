@@ -1,9 +1,32 @@
-import React, { Suspense, useState, useEffect } from 'react';
-import { Canvas } from '@react-three/fiber';
+import React, { Suspense, useState, useEffect, useRef } from 'react';
+import { Canvas, useFrame } from '@react-three/fiber';
 import { MathematicalSculpture } from './MathematicalSculpture';
 import { ParticleConstellation } from './ParticleConstellation';
 import { CameraController } from './CameraController';
 import { usePortfolioStore } from '../../store/usePortfolioStore';
+
+import { globalMouseVector } from '../../utils/mouseTracker';
+import * as THREE from 'three';
+
+const CursorPointLight: React.FC<{ isLight: boolean }> = ({ isLight }) => {
+  const lightRef = useRef<THREE.PointLight>(null);
+
+  useFrame(() => {
+    if (!lightRef.current) return;
+    lightRef.current.position.x = THREE.MathUtils.lerp(lightRef.current.position.x, globalMouseVector.x * 4.0, 0.08);
+    lightRef.current.position.y = THREE.MathUtils.lerp(lightRef.current.position.y, globalMouseVector.y * 3.5, 0.08);
+  });
+
+  return (
+    <pointLight
+      ref={lightRef}
+      position={[0, 0, 3.8]}
+      intensity={isLight ? 1.4 : 2.2}
+      distance={14}
+      color={isLight ? '#f59e0b' : '#fbbf24'}
+    />
+  );
+};
 
 export const SceneContainer: React.FC = () => {
   const [hasWebGL] = useState(() => {
@@ -50,31 +73,35 @@ export const SceneContainer: React.FC = () => {
         className="w-full h-full"
       >
         <Suspense fallback={null}>
-          {/* Iluminación adaptativa según el tema (Modo Claro vs Modo Oscuro) */}
-          <ambientLight intensity={isLight ? 0.75 : 0.4} />
+          {/* Iluminación adaptativa Fénix 357 */}
+          <ambientLight intensity={isLight ? 0.8 : 0.45} />
           <directionalLight
             position={[5, 6, 4]}
-            intensity={isLight ? 1.4 : 1.2}
-            color={isLight ? '#ffffff' : '#f8fafc'}
+            intensity={isLight ? 1.5 : 1.3}
+            color={isLight ? '#ffffff' : '#fef3c7'}
           />
+          {/* Luz de relleno en violeta eléctrico */}
           <pointLight
             position={[-4, -3, -2]}
-            intensity={isLight ? 0.9 : 0.8}
-            color={isLight ? '#2563eb' : '#38bdf8'}
+            intensity={isLight ? 1.0 : 1.2}
+            color={isLight ? '#7c3aed' : '#a855f7'}
           />
+          {/* Luz de contorno en fucsia / amatista */}
           <pointLight
             position={[3, -4, 3]}
-            intensity={isLight ? 0.7 : 0.6}
-            color={isLight ? '#059669' : '#818cf8'}
+            intensity={isLight ? 0.8 : 0.9}
+            color={isLight ? '#c026d3' : '#e879f9'}
           />
+          {/* Luz puntual dinámica del Fénix que sigue suavemente el cursor */}
+          <CursorPointLight isLight={isLight} />
 
           {/* Controlador Cinemático de Cámara */}
           <CameraController />
 
-          {/* Escultura Matemática Central */}
+          {/* Escultura Matemática Central del Fénix */}
           <MathematicalSculpture />
 
-          {/* Constelación de Partículas con Físicas y optimización para móvil */}
+          {/* Enjambre de 3,500 Partículas GPU */}
           <ParticleConstellation />
         </Suspense>
       </Canvas>
