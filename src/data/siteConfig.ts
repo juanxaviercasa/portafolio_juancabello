@@ -1,5 +1,7 @@
 export interface SiteConfig {
   name: string;
+  brandName: string;
+  brandFullName: string;
   role: string;
   tagline: string;
   description: string;
@@ -9,6 +11,11 @@ export interface SiteConfig {
   linkedin: string;
   scholar: string;
   cvUrl: string;
+  concept357: {
+    pillars: { title: string; desc: string }[];
+    frequencies: { id: string; name: string; href: string }[];
+    dimensions: { label: string; value: string; desc: string }[];
+  };
   stats: {
     label: string;
     value: string;
@@ -23,8 +30,10 @@ export interface SiteConfig {
 
 export const siteConfig: SiteConfig = {
   name: "Juan Cabello",
+  brandName: "FÉNIX 357",
+  brandFullName: "JUAN CABELLO // FÉNIX 357",
   role: "Educador Matemático & Ingeniero Web Frontend",
-  tagline: "Donde la abstracción matemática se transforma en experiencia visual pedagógica.",
+  tagline: "Donde la abstracción matemática renace como experiencia visual pedagógica.",
   description: "Especialista en la intersección de pedagogía matemática moderna, computación gráfica en tiempo real (WebGL/Three.js) y diseño web accesible de alto rendimiento.",
   location: "Santiago, Chile / Remoto",
   email: "contacto@juancabello.dev",
@@ -32,6 +41,29 @@ export const siteConfig: SiteConfig = {
   linkedin: "https://linkedin.com",
   scholar: "https://scholar.google.com",
   cvUrl: "/cv-juan-cabello.pdf",
+  concept357: {
+    pillars: [
+      { title: "Educación", desc: "Didáctica matemática intuitiva y pedagogía activa" },
+      { title: "Matemáticas", desc: "Topología, cálculo multivariable y física de fluidos" },
+      { title: "Diseño Web", desc: "Computación gráfica en GPU, WebGL y shaders de 60 FPS" }
+    ],
+    frequencies: [
+      { id: "01", name: "Génesis", href: "#hero" },
+      { id: "02", name: "Obras", href: "#proyectos" },
+      { id: "03", name: "Laboratorio 357", href: "#laboratorio" },
+      { id: "04", name: "Trayectoria", href: "#sobre-mi" },
+      { id: "05", name: "Resonancia", href: "#contacto" }
+    ],
+    dimensions: [
+      { label: "Estudiantes Impactados", value: "45,000+", desc: "A través de plataformas interactivas universitarias" },
+      { label: "Simuladores Matemáticos", value: "28+", desc: "Desarrollados con Three.js, WebGL y Shaders GLSL" },
+      { label: "Frecuencia Fundamental", value: "432 Hz", desc: "Afinación pitagórica del motor de audio procedural" },
+      { label: "Tasa de Refresco GPU", value: "60 FPS", desc: "Evaluación analítica en Vertex Shaders sin sobrecarga" },
+      { label: "Variedades Topológicas", value: "7 Modos", desc: "Superficies algebraicas computadas analíticamente" },
+      { label: "Años de Docencia", value: "8+ Años", desc: "Cátedras de Cálculo y Álgebra Lineal en Ingeniería" },
+      { label: "Latencia de Cómputo", value: "< 16ms", desc: "Pipeline paralelo optimizado para dispositivos móviles" }
+    ]
+  },
   stats: [
     {
       label: "Estudiantes Impactados",

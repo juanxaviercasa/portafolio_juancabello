@@ -29,97 +29,128 @@
   }
 }
 
+/* Fénix 357 Theme Tokens & Glassmorphism */
+@layer base {
+  :root {
+    --color-fenix-dark: #0B0813;
+    --color-fenix-dark-card: #130E24;
+    --color-fenix-light: #FAF5FF;
+    --color-fenix-light-subtle: #F5F3FF;
+    --color-fenix-purple: #A855F7;
+    --color-fenix-fuchsia: #E879F9;
+    --color-fenix-amber: #F59E0B;
+    --color-fenix-gold: #FBBF24;
+  }
+
+  body {
+    background-color: #FAF5FF;
+    color: #1E1035;
+  }
+
+  .dark body,
+  html.dark body {
+    background-color: #0B0813;
+    color: #F5F3FF;
+  }
+}
+
 /* Glassmorphism primitives with light/dark adaptive tokens */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(226, 232, 240, 0.85);
-  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(216, 180, 254, 0.45);
+  box-shadow: 0 4px 24px -2px rgba(147, 51, 234, 0.06);
 }
 
 .dark .glass-panel {
-  background: rgba(13, 17, 26, 0.72);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+  background: rgba(19, 14, 36, 0.72);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(168, 85, 247, 0.22);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6), 0 0 20px -5px rgba(147, 51, 234, 0.12);
 }
 
 .glass-panel-interactive {
   background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(226, 232, 240, 0.9);
-  box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.05);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(216, 180, 254, 0.55);
+  box-shadow: 0 4px 20px -2px rgba(126, 34, 206, 0.08);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .glass-panel-interactive:hover {
   background: rgba(255, 255, 255, 0.98);
-  border-color: rgba(37, 99, 235, 0.35);
-  box-shadow: 0 16px 36px -8px rgba(37, 99, 235, 0.12);
+  border-color: rgba(168, 85, 247, 0.5);
+  box-shadow: 0 16px 36px -8px rgba(168, 85, 247, 0.2), 0 0 15px rgba(245, 158, 11, 0.12);
   transform: translateY(-2px);
 }
 
 .dark .glass-panel-interactive {
-  background: rgba(13, 17, 26, 0.65);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: none;
+  background: rgba(19, 14, 36, 0.68);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(168, 85, 247, 0.22);
+  box-shadow: 0 8px 32px -8px rgba(0, 0, 0, 0.6);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .dark .glass-panel-interactive:hover {
-  background: rgba(18, 24, 38, 0.85);
-  border-color: rgba(56, 189, 248, 0.35);
-  box-shadow: 0 16px 36px -10px rgba(56, 189, 248, 0.15);
+  background: rgba(28, 19, 53, 0.85);
+  border-color: rgba(192, 132, 252, 0.5);
+  box-shadow: 0 16px 40px -10px rgba(168, 85, 247, 0.35), 0 0 25px rgba(245, 158, 11, 0.15);
   transform: translateY(-2px);
 }
 
-/* Subtle mathematical grid backdrop */
+/* Fénix 357 mathematical grid backdrop */
 .math-grid-bg {
   background-image: 
-    radial-gradient(circle at 50% 50%, rgba(37, 99, 235, 0.04) 0%, transparent 65%),
-    linear-gradient(to right, rgba(15, 23, 42, 0.04) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(15, 23, 42, 0.04) 1px, transparent 1px);
-  background-size: 100% 100%, 48px 48px, 48px 48px;
+    radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.06) 0%, transparent 65%),
+    radial-gradient(circle at 80% 20%, rgba(245, 158, 11, 0.04) 0%, transparent 50%),
+    linear-gradient(to right, rgba(126, 34, 206, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(126, 34, 206, 0.04) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 48px 48px, 48px 48px;
 }
 
 .dark .math-grid-bg {
   background-image: 
-    radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.05) 0%, transparent 60%),
+    radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.12) 0%, transparent 60%),
+    radial-gradient(circle at 80% 20%, rgba(245, 158, 11, 0.06) 0%, transparent 50%),
     linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-  background-size: 100% 100%, 48px 48px, 48px 48px;
+  background-size: 100% 100%, 100% 100%, 48px 48px, 48px 48px;
 }
 
-/* Smooth custom scrollbar */
+/* Smooth custom scrollbar Fénix 357 */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 7px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: #F5F3FF;
 }
 
 .dark ::-webkit-scrollbar-track {
-  background: #080b11;
+  background: #0B0813;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #D8B4FE;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #2563eb;
+  background: #A855F7;
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  background: #1e293b;
+  background: #2D1D4D;
+  border-radius: 9999px;
 }
 
 .dark ::-webkit-scrollbar-thumb:hover {
-  background: #38bdf8;
+  background: #F59E0B;
 }
 
 /* Pulsating Purple Crystal Border */

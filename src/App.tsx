@@ -71,7 +71,7 @@ export const App: React.FC = () => {
   }, [setScrollProgress, setActiveSection, playSectionTone]);
 
   return (
-    <div className="relative min-h-screen bg-[#F8FAFC] dark:bg-[#080B11] text-slate-900 dark:text-slate-100 selection:bg-blue-500/20 selection:text-blue-900 dark:selection:bg-cyan-500/30 dark:selection:text-cyan-200 transition-colors duration-300 overflow-x-hidden">
+    <div className="relative min-h-screen bg-[#FAF5FF] dark:bg-[#0B0813] text-[#1E1035] dark:text-[#F5F3FF] selection:bg-purple-300 dark:selection:bg-purple-900/60 selection:text-purple-950 dark:selection:text-purple-200 transition-colors duration-300 overflow-x-hidden">
       {/* Capa 1: Escena 3D WebGL persistente en background */}
       <SceneContainer />
 
