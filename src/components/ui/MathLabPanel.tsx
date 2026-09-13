@@ -55,18 +55,18 @@ export const MathLabPanel: React.FC = () => {
   };
 
   return (
-    <GlassCard accentBorder className="relative overflow-hidden p-6 sm:p-8">
+    <GlassCard accentBorder="purple" className="relative overflow-hidden p-6 sm:p-8">
       {/* Header del Laboratorio */}
       <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-slate-200 dark:border-white/10">
         <div className="flex items-center gap-3.5">
-          <div className="p-3 rounded-2xl bg-blue-500/10 dark:bg-cyan-500/10 border border-blue-500/20 dark:border-cyan-500/20 text-blue-600 dark:text-cyan-400">
+          <div className="p-3 rounded-2xl bg-purple-500/10 dark:bg-purple-500/20 border border-purple-500/30 text-purple-600 dark:text-purple-300">
             <Sliders className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
           <div>
             <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-slate-100 flex flex-wrap items-center gap-2">
               <span>Laboratorio de Variedades Matemáticas</span>
-              <span className="text-xs font-mono text-blue-700 dark:text-cyan-400 bg-blue-50 dark:bg-cyan-950/60 px-2.5 py-0.5 rounded-full border border-blue-200 dark:border-cyan-500/30">
-                GPU Shader Live
+              <span className="text-xs font-mono text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/60 px-2.5 py-0.5 rounded-full border border-purple-300 dark:border-purple-500/40">
+                GPU Shader Live // 357
               </span>
             </h3>
             <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-0.5">

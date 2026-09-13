@@ -121,3 +121,24 @@
 .dark ::-webkit-scrollbar-thumb:hover {
   background: #38bdf8;
 }
+
+/* Pulsating Purple Crystal Border */
+@keyframes purpleCrystalPulse {
+  0%, 100% {
+    border-color: rgba(168, 85, 247, 0.45);
+    box-shadow: 
+      0 0 16px -2px rgba(168, 85, 247, 0.35),
+      inset 0 0 10px rgba(192, 132, 252, 0.15);
+  }
+  50% {
+    border-color: rgba(216, 180, 254, 0.95);
+    box-shadow: 
+      0 0 28px 3px rgba(168, 85, 247, 0.6),
+      0 0 8px 1px rgba(233, 213, 255, 0.8),
+      inset 0 0 16px rgba(192, 132, 252, 0.3);
+  }
+}
+
+.purple-crystal-pulse {
+  animation: purpleCrystalPulse 2.8s ease-in-out infinite;
+}

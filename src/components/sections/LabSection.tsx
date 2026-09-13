@@ -1,5 +1,5 @@
 import React from 'react';
-import { Compass, Sparkles, BookOpen, Music, Cpu } from 'lucide-react';
+import { Sparkles, BookOpen, Music, Cpu } from 'lucide-react';
 import { MathLabPanel } from '../ui/MathLabPanel';
 import { GlassCard } from '../ui/GlassCard';
 import { Latex } from '../ui/Latex';
@@ -12,9 +12,12 @@ export const LabSection: React.FC = () => {
     <section id="laboratorio" className="py-20 sm:py-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       {/* Header */}
       <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 dark:bg-cyan-500/10 border border-blue-500/20 dark:border-cyan-500/20 text-blue-700 dark:text-cyan-300 text-xs sm:text-sm font-mono mb-3">
-          <Compass className="w-4 h-4 text-blue-600 dark:text-cyan-400" />
-          <span>Laboratorio Matemático Interactivo</span>
+        <div className="inline-flex items-center gap-2.5 px-4 sm:px-5 py-2 rounded-full bg-purple-500/10 dark:bg-purple-950/40 border border-purple-500/50 dark:border-purple-400/60 text-purple-700 dark:text-purple-300 text-xs sm:text-sm font-mono mb-4 backdrop-blur-xl purple-crystal-pulse select-none">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-purple-500"></span>
+          </span>
+          <span className="font-semibold tracking-wider">[ 357 // LABORATORIO CREATIVO & MATEMÁTICO ]</span>
         </div>
         <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight">
           Visualizador de Variedades y Armónicos
