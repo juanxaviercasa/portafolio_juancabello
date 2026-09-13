@@ -16,12 +16,12 @@ export const HeroSection: React.FC = () => {
         {/* Columna Izquierda: Mensaje Central & Jerarquía Visual (55% desktop) */}
         <div className="lg:col-span-7 z-10">
           {/* Badge superior FÉNIX 357 con borde de cristal púrpura pulsante */}
-          <div className="inline-flex items-center gap-2.5 px-4 sm:px-5 py-2 rounded-full bg-purple-500/10 dark:bg-[#130E24]/80 border border-purple-500/50 dark:border-purple-400/60 text-purple-700 dark:text-purple-300 text-xs sm:text-sm font-mono mb-6 backdrop-blur-xl purple-crystal-pulse select-none">
-            <span className="relative flex h-2 w-2">
+          <div className="inline-flex items-center gap-2 sm:gap-2.5 px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-full bg-purple-500/10 dark:bg-[#130E24]/80 border border-purple-500/50 dark:border-purple-400/60 text-purple-700 dark:text-purple-300 text-[11px] sm:text-xs md:text-sm font-mono mb-6 backdrop-blur-xl purple-crystal-pulse select-none max-w-full">
+            <span className="relative flex h-2 w-2 flex-shrink-0">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-purple-500"></span>
             </span>
-            <span className="font-semibold tracking-wider">[ FÉNIX 357 // LABORATORIO CREATIVO & MATEMÁTICO ]</span>
+            <span className="font-semibold tracking-wider truncate">[ FÉNIX 357 // LABORATORIO CREATIVO & MATEMÁTICO ]</span>
           </div>
 
           {/* Título Principal H1 con gradiente de texto metálico-neón */}
@@ -49,18 +49,18 @@ export const HeroSection: React.FC = () => {
             <a
               href="#proyectos"
               onClick={() => playTick(1000)}
-              className="flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-purple-600 via-fuchsia-600 to-amber-500 hover:from-purple-500 hover:via-fuchsia-500 hover:to-amber-400 text-white font-semibold text-sm sm:text-base shadow-lg shadow-purple-600/25 dark:shadow-purple-500/30 hover:shadow-xl hover:shadow-purple-500/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-purple-400 cursor-pointer"
+              className="flex items-center justify-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 rounded-2xl bg-gradient-to-r from-purple-600 via-fuchsia-600 to-amber-500 hover:from-purple-500 hover:via-fuchsia-500 hover:to-amber-400 text-white font-semibold text-sm sm:text-base shadow-lg shadow-purple-600/25 dark:shadow-purple-500/30 hover:shadow-xl hover:shadow-purple-500/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-purple-400 cursor-pointer whitespace-nowrap flex-shrink-0"
             >
               <span>Explorar Proyectos</span>
-              <ArrowDown className="w-4 h-4" />
+              <ArrowDown className="w-4 h-4 flex-shrink-0" />
             </a>
 
             <a
               href="#laboratorio"
               onClick={() => playTick(1200)}
-              className="flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-white/80 dark:bg-[#130E24]/80 hover:bg-purple-50 dark:hover:bg-[#1C1335] text-slate-800 dark:text-white font-semibold text-sm sm:text-base border border-purple-200 dark:border-purple-500/30 hover:border-purple-400 dark:hover:border-purple-400/60 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 backdrop-blur-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400 cursor-pointer"
+              className="flex items-center justify-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 rounded-2xl bg-white/80 dark:bg-[#130E24]/80 hover:bg-purple-50 dark:hover:bg-[#1C1335] text-slate-800 dark:text-white font-semibold text-sm sm:text-base border border-purple-200 dark:border-purple-500/30 hover:border-purple-400 dark:hover:border-purple-400/60 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 backdrop-blur-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400 cursor-pointer whitespace-nowrap flex-shrink-0"
             >
-              <Compass className="w-4 h-4 text-purple-600 dark:text-amber-400" />
+              <Compass className="w-4 h-4 text-purple-600 dark:text-amber-400 flex-shrink-0" />
               <span>Laboratorio 357</span>
             </a>
 
@@ -69,9 +69,9 @@ export const HeroSection: React.FC = () => {
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => playTick(1350)}
-              className="flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-purple-50 dark:bg-[#130E24] hover:bg-purple-100 dark:hover:bg-purple-900/30 text-purple-900 dark:text-purple-200 font-semibold text-sm sm:text-base border border-purple-200 dark:border-purple-500/30 hover:border-purple-400 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 backdrop-blur-md focus:outline-none focus:ring-2 focus:ring-purple-400 cursor-pointer"
+              className="flex items-center justify-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 rounded-2xl bg-purple-50 dark:bg-[#130E24] hover:bg-purple-100 dark:hover:bg-purple-900/30 text-purple-900 dark:text-purple-200 font-semibold text-sm sm:text-base border border-purple-200 dark:border-purple-500/30 hover:border-purple-400 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 backdrop-blur-md focus:outline-none focus:ring-2 focus:ring-purple-400 cursor-pointer whitespace-nowrap flex-shrink-0"
             >
-              <Download className="w-4 h-4 text-purple-600 dark:text-amber-300" />
+              <Download className="w-4 h-4 text-purple-600 dark:text-amber-300 flex-shrink-0" />
               <span>Descargar CV</span>
             </a>
           </div>

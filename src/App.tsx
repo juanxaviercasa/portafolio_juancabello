@@ -92,8 +92,8 @@ export const App: React.FC = () => {
         {/* Pie de Página */}
         <Footer />
 
-        {/* Dock flotante de controles persistentes: Selector de Tema + Audio */}
-        <div className="fixed bottom-6 right-6 z-40 flex items-center gap-2.5">
+        {/* Dock flotante de controles persistentes: Selector de Tema + Audio (en tablet y desktop) */}
+        <div className="hidden sm:flex fixed bottom-6 right-6 z-40 items-center gap-2.5">
           <ThemeToggle variant="floating" />
           <AudioToggle variant="header" />
         </div>

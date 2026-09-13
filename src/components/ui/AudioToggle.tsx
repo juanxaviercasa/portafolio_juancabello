@@ -30,7 +30,7 @@ export const AudioToggle: React.FC<{ variant?: 'header' | 'floating' }> = ({ var
       aria-label={isAudioMuted ? `Activar concierto armónico en ${audioSettings.fundamentalFreq} Hz` : 'Silenciar concierto'}
       title={isAudioMuted ? `Activar concierto neoclásico en ${audioSettings.fundamentalFreq} Hz` : `Silenciar concierto (${audioSettings.fundamentalFreq} Hz)`}
       className={`
-        group relative flex items-center gap-2.5 px-3 py-2 rounded-xl cursor-pointer
+        group relative flex items-center flex-shrink-0 gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl cursor-pointer whitespace-nowrap
         transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-400/50 dark:focus:ring-amber-400/50
         ${
           isFloating
@@ -39,7 +39,7 @@ export const AudioToggle: React.FC<{ variant?: 'header' | 'floating' }> = ({ var
         }
       `}
     >
-      <div className="relative flex items-center justify-center">
+      <div className="relative flex items-center justify-center flex-shrink-0">
         {isAudioMuted ? (
           <VolumeX className="w-4 h-4 text-slate-500 dark:text-slate-400 group-hover:text-slate-800 dark:group-hover:text-slate-200 transition-colors" />
         ) : (
@@ -47,28 +47,34 @@ export const AudioToggle: React.FC<{ variant?: 'header' | 'floating' }> = ({ var
         )}
       </div>
 
-      <div className="flex items-center gap-0.5 h-3">
-        {!isAudioMuted ? (
-          <>
-            <span className="w-0.5 h-2 bg-purple-600 dark:bg-amber-400 rounded-full animate-[bounce_0.8s_infinite_100ms]" />
-            <span className="w-0.5 h-3 bg-fuchsia-600 dark:bg-amber-300 rounded-full animate-[bounce_0.8s_infinite_300ms]" />
-            <span className="w-0.5 h-1.5 bg-amber-600 dark:bg-amber-400 rounded-full animate-[bounce_0.8s_infinite_200ms]" />
-          </>
-        ) : (
-          <span className="text-xs font-mono text-slate-500 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300">
+      {!isAudioMuted && (
+        <div className="flex items-center gap-0.5 h-3 flex-shrink-0">
+          <span className="w-0.5 h-2 bg-purple-600 dark:bg-amber-400 rounded-full animate-[bounce_0.8s_infinite_100ms]" />
+          <span className="w-0.5 h-3 bg-fuchsia-600 dark:bg-amber-300 rounded-full animate-[bounce_0.8s_infinite_300ms]" />
+          <span className="w-0.5 h-1.5 bg-amber-600 dark:bg-amber-400 rounded-full animate-[bounce_0.8s_infinite_200ms]" />
+        </div>
+      )}
+
+      {isAudioMuted ? (
+        <>
+          <span className="hidden sm:inline-block text-xs font-mono text-slate-500 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300 whitespace-nowrap">
             Audio OFF
           </span>
-        )}
-      </div>
-
-      {!isAudioMuted ? (
-        <span className="text-xs font-mono font-bold text-purple-700 dark:text-amber-300">
-          {audioSettings.fundamentalFreq}Hz {audioSettings.isConcertMode ? 'Concierto' : 'Drone'}
-        </span>
+          <span className="hidden xl:inline-block text-[11px] font-mono text-slate-400 dark:text-slate-500 whitespace-nowrap">
+            (Click para oír)
+          </span>
+        </>
       ) : (
-        <span className="hidden sm:inline-block text-[11px] font-mono text-slate-400 dark:text-slate-500">
-          (Click para oír)
-        </span>
+        <>
+          {/* En tablets y laptops intermedias: solo la frecuencia compacta */}
+          <span className="hidden sm:inline-block xl:hidden text-xs font-mono font-bold text-purple-700 dark:text-amber-300 whitespace-nowrap">
+            {audioSettings.fundamentalFreq}Hz
+          </span>
+          {/* En desktop amplio (xl): frecuencia y modo completo */}
+          <span className="hidden xl:inline-block text-xs font-mono font-bold text-purple-700 dark:text-amber-300 whitespace-nowrap">
+            {audioSettings.fundamentalFreq}Hz {audioSettings.isConcertMode ? 'Concierto' : 'Drone'}
+          </span>
+        </>
       )}
     </button>
   );
