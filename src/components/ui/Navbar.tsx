@@ -34,21 +34,21 @@ export const Navbar: React.FC = () => {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
-          ? 'py-3 bg-white/90 dark:bg-[#0B0813]/90 backdrop-blur-xl border-b border-purple-200/70 dark:border-purple-500/20 shadow-lg shadow-purple-900/5 dark:shadow-2xl dark:shadow-black/70'
-          : 'py-5 bg-transparent'
+          ? 'py-2.5 sm:py-3 bg-white/90 dark:bg-[#0B0813]/90 backdrop-blur-xl border-b border-purple-200/70 dark:border-purple-500/20 shadow-lg shadow-purple-900/5 dark:shadow-2xl dark:shadow-black/70'
+          : 'py-3.5 sm:py-5 bg-transparent'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 flex items-center justify-between flex-nowrap gap-2 sm:gap-4">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 xl:px-8 flex items-center justify-between gap-2 sm:gap-3 xl:gap-4">
         {/* Brand / Logo FÉNIX 357 */}
         <a
           href="#hero"
           onClick={() => handleLinkClick(1100)}
-          className="group flex items-center gap-2.5 sm:gap-3 flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-purple-500/50 rounded-xl p-1 cursor-pointer whitespace-nowrap"
+          className="group flex items-center gap-2 sm:gap-2.5 flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-purple-500/50 rounded-xl p-1 cursor-pointer"
         >
-          <div className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-purple-600 via-fuchsia-600 to-amber-500 flex items-center justify-center p-0.5 shadow-md shadow-purple-500/25 group-hover:shadow-purple-500/40 group-hover:scale-105 transition-all flex-shrink-0">
+          <div className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-purple-600 via-fuchsia-600 to-amber-500 flex items-center justify-center p-0.5 shadow-md shadow-purple-500/25 group-hover:shadow-purple-500/40 group-hover:scale-105 transition-all flex-shrink-0">
             <div className="w-full h-full bg-[#FAF5FF] dark:bg-[#0B0813] rounded-[10px] flex items-center justify-center relative overflow-hidden">
               {/* Geometric Phoenix Flame Glyph */}
-              <svg viewBox="0 0 24 24" className="w-4 h-4 sm:w-5 sm:h-5" fill="none">
+              <svg viewBox="0 0 24 24" className="w-4 h-4 sm:w-4.5 sm:h-4.5" fill="none">
                 <path
                   d="M12 2L15 8L20 9L16 14L17 21L12 17L7 21L8 14L4 9L9 8L12 2Z"
                   fill="url(#phoenix-nav-grad)"
@@ -70,24 +70,24 @@ export const Navbar: React.FC = () => {
               </svg>
             </div>
           </div>
-          <div className="flex flex-col flex-shrink-0">
+          <div className="flex flex-col">
             <div className="flex items-center gap-1 sm:gap-1.5 whitespace-nowrap">
-              <span className="font-mono font-semibold tracking-[0.12em] sm:tracking-[0.2em] text-slate-900 dark:text-white text-xs sm:text-sm uppercase group-hover:text-purple-600 dark:group-hover:text-purple-300 transition-colors">
+              <span className="hidden min-[420px]:inline font-mono font-semibold tracking-[0.1em] sm:tracking-[0.16em] text-slate-900 dark:text-white text-xs sm:text-sm uppercase group-hover:text-purple-600 dark:group-hover:text-purple-300 transition-colors">
                 Juan Cabello
               </span>
-              <span className="text-purple-500 font-mono font-bold text-xs">//</span>
-              <span className="font-mono font-bold tracking-[0.18em] sm:tracking-[0.25em] text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-fuchsia-500 to-amber-500 dark:from-purple-400 dark:via-fuchsia-300 dark:to-amber-400 text-xs sm:text-sm">
+              <span className="hidden min-[420px]:inline text-purple-500 font-mono font-bold text-xs">//</span>
+              <span className="font-mono font-bold tracking-[0.15em] sm:tracking-[0.2em] text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-fuchsia-500 to-amber-500 dark:from-purple-400 dark:via-fuchsia-300 dark:to-amber-400 text-xs sm:text-sm">
                 FÉNIX 357
               </span>
             </div>
-            <span className="hidden xl:block text-[10px] sm:text-[11px] font-mono text-purple-900/60 dark:text-purple-300/70 tracking-widest uppercase whitespace-nowrap">
+            <span className="hidden 2xl:block text-[10px] sm:text-[11px] font-mono text-purple-900/60 dark:text-purple-300/70 tracking-widest uppercase whitespace-nowrap">
               3 Pilares &middot; 5 Frecuencias &middot; 7 Dimensiones
             </span>
           </div>
         </a>
 
-        {/* Desktop Navigation Links (Visible desde pantallas lg >= 1024px) */}
-        <nav className="hidden lg:flex items-center gap-1 bg-purple-50/70 dark:bg-[#130E24]/80 p-1.5 rounded-full border border-purple-200/70 dark:border-purple-500/20 backdrop-blur-md shadow-sm flex-shrink-0">
+        {/* Desktop Navigation Links (Visible en pantallas lg >= 1024px) */}
+        <nav className="hidden lg:flex items-center gap-1 bg-purple-50/70 dark:bg-[#130E24]/80 p-1 rounded-full border border-purple-200/70 dark:border-purple-500/20 backdrop-blur-md shadow-sm">
           {NAV_LINKS.map((link) => {
             const Icon = link.icon;
             return (
@@ -95,7 +95,7 @@ export const Navbar: React.FC = () => {
                 key={link.href}
                 href={link.href}
                 onClick={() => handleLinkClick(980)}
-                className="flex items-center gap-1.5 px-3 xl:px-4 py-1.5 rounded-full text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-purple-600 dark:hover:text-amber-300 hover:bg-white dark:hover:bg-purple-900/40 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500/40 cursor-pointer whitespace-nowrap"
+                className="flex items-center gap-1.5 px-2.5 xl:px-3.5 py-1.5 rounded-full text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-purple-600 dark:hover:text-amber-300 hover:bg-white dark:hover:bg-purple-900/40 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500/40 cursor-pointer whitespace-nowrap"
               >
                 <Icon className="w-3.5 h-3.5 opacity-80" />
                 <span>{link.label}</span>
@@ -104,45 +104,31 @@ export const Navbar: React.FC = () => {
           })}
         </nav>
 
-        {/* Actions Desktop & Tablet (>= sm: 640px) */}
-        <div className="hidden sm:flex items-center gap-2 sm:gap-2.5 xl:gap-3 flex-shrink-0">
-          <div className="hidden md:block">
-            <ThemeToggle variant="pill" showLabel={false} className="xl:hidden" />
-            <div className="hidden xl:block">
-              <ThemeToggle variant="pill" showLabel={true} />
-            </div>
-          </div>
+        {/* Acciones Header Unificadas (Desktop, Tablet y Móvil) */}
+        <div className="flex items-center gap-1.5 sm:gap-2 xl:gap-2.5 flex-shrink-0">
+          {/* Botón selector de tema compacto */}
+          <ThemeToggle variant="icon" />
+
+          {/* Botón selector de audio con síntesis armónica */}
           <AudioToggle variant="header" />
 
+          {/* Botón Descargar CV (Visible desde tablet sm >= 640px) */}
           <a
             href={siteConfig.cvUrl}
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => handleLinkClick(1320)}
-            className="group relative flex items-center flex-shrink-0 gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs font-semibold bg-gradient-to-r from-purple-600 via-fuchsia-600 to-amber-500 hover:from-purple-500 hover:via-fuchsia-500 hover:to-amber-400 text-white shadow-md shadow-purple-500/25 hover:shadow-purple-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-purple-400 cursor-pointer whitespace-nowrap"
+            className="hidden sm:inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 xl:px-4 py-2 rounded-xl text-xs font-semibold bg-gradient-to-r from-purple-600 via-fuchsia-600 to-amber-500 hover:from-purple-500 hover:via-fuchsia-500 hover:to-amber-400 text-white shadow-md shadow-purple-500/25 hover:shadow-purple-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-purple-400 cursor-pointer whitespace-nowrap"
           >
             <Download className="w-3.5 h-3.5 group-hover:-translate-y-0.5 transition-transform flex-shrink-0" />
-            <span className="hidden md:inline">Descargar </span>
+            <span className="hidden xl:inline">Descargar </span>
             <span>CV</span>
           </a>
 
-          {/* Hamburger button visible en tablet (sm y md < lg) */}
+          {/* Botón de Menú Hamburguesa visible en Móvil y Tablet (< lg: 1024px) */}
           <button
             onClick={() => setIsMobileOpen(!isMobileOpen)}
             className="lg:hidden p-2 rounded-xl bg-purple-50 dark:bg-[#130E24] border border-purple-200 dark:border-purple-500/30 text-slate-700 dark:text-slate-300 hover:text-purple-600 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 cursor-pointer flex-shrink-0"
-            aria-label={isMobileOpen ? 'Cerrar menú' : 'Abrir menú'}
-          >
-            {isMobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
-        </div>
-
-        {/* Mobile controls (< sm: 640px) */}
-        <div className="flex sm:hidden items-center gap-1.5 flex-shrink-0">
-          <ThemeToggle variant="pill" showLabel={false} />
-          <AudioToggle variant="header" />
-          <button
-            onClick={() => setIsMobileOpen(!isMobileOpen)}
-            className="p-2 rounded-xl bg-purple-50 dark:bg-[#130E24] border border-purple-200 dark:border-purple-500/30 text-slate-700 dark:text-slate-300 hover:text-purple-600 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 cursor-pointer flex-shrink-0"
             aria-label={isMobileOpen ? 'Cerrar menú' : 'Abrir menú'}
           >
             {isMobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}

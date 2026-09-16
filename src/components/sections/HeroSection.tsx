@@ -21,7 +21,9 @@ export const HeroSection: React.FC = () => {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-purple-500"></span>
             </span>
-            <span className="font-semibold tracking-wider truncate">[ FÉNIX 357 // LABORATORIO CREATIVO & MATEMÁTICO ]</span>
+            <span className="font-semibold tracking-wider">
+              [ FÉNIX 357 // <span className="hidden sm:inline">LABORATORIO CREATIVO &amp; MATEMÁTICO</span><span className="sm:hidden">LAB CREATIVO</span> ]
+            </span>
           </div>
 
           {/* Título Principal H1 con gradiente de texto metálico-neón */}
@@ -45,11 +47,11 @@ export const HeroSection: React.FC = () => {
           </p>
 
           {/* Botones de acción Two-Speed con gradiente Púrpura-Ámbar */}
-          <div className="flex flex-wrap items-center gap-3 sm:gap-4 mb-12">
+          <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-3 sm:gap-4 mb-12">
             <a
               href="#proyectos"
               onClick={() => playTick(1000)}
-              className="flex items-center justify-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 rounded-2xl bg-gradient-to-r from-purple-600 via-fuchsia-600 to-amber-500 hover:from-purple-500 hover:via-fuchsia-500 hover:to-amber-400 text-white font-semibold text-sm sm:text-base shadow-lg shadow-purple-600/25 dark:shadow-purple-500/30 hover:shadow-xl hover:shadow-purple-500/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-purple-400 cursor-pointer whitespace-nowrap flex-shrink-0"
+              className="flex items-center justify-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 rounded-2xl bg-gradient-to-r from-purple-600 via-fuchsia-600 to-amber-500 hover:from-purple-500 hover:via-fuchsia-500 hover:to-amber-400 text-white font-semibold text-sm sm:text-base shadow-lg shadow-purple-600/25 dark:shadow-purple-500/30 hover:shadow-xl hover:shadow-purple-500/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-purple-400 cursor-pointer whitespace-nowrap text-center"
             >
               <span>Explorar Proyectos</span>
               <ArrowDown className="w-4 h-4 flex-shrink-0" />
@@ -58,7 +60,7 @@ export const HeroSection: React.FC = () => {
             <a
               href="#laboratorio"
               onClick={() => playTick(1200)}
-              className="flex items-center justify-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 rounded-2xl bg-white/80 dark:bg-[#130E24]/80 hover:bg-purple-50 dark:hover:bg-[#1C1335] text-slate-800 dark:text-white font-semibold text-sm sm:text-base border border-purple-200 dark:border-purple-500/30 hover:border-purple-400 dark:hover:border-purple-400/60 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 backdrop-blur-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400 cursor-pointer whitespace-nowrap flex-shrink-0"
+              className="flex items-center justify-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 rounded-2xl bg-white/80 dark:bg-[#130E24]/80 hover:bg-purple-50 dark:hover:bg-[#1C1335] text-slate-800 dark:text-white font-semibold text-sm sm:text-base border border-purple-200 dark:border-purple-500/30 hover:border-purple-400 dark:hover:border-purple-400/60 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 backdrop-blur-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400 cursor-pointer whitespace-nowrap text-center"
             >
               <Compass className="w-4 h-4 text-purple-600 dark:text-amber-400 flex-shrink-0" />
               <span>Laboratorio 357</span>
@@ -69,7 +71,7 @@ export const HeroSection: React.FC = () => {
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => playTick(1350)}
-              className="flex items-center justify-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 rounded-2xl bg-purple-50 dark:bg-[#130E24] hover:bg-purple-100 dark:hover:bg-purple-900/30 text-purple-900 dark:text-purple-200 font-semibold text-sm sm:text-base border border-purple-200 dark:border-purple-500/30 hover:border-purple-400 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 backdrop-blur-md focus:outline-none focus:ring-2 focus:ring-purple-400 cursor-pointer whitespace-nowrap flex-shrink-0"
+              className="flex items-center justify-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 rounded-2xl bg-purple-50 dark:bg-[#130E24] hover:bg-purple-100 dark:hover:bg-purple-900/30 text-purple-900 dark:text-purple-200 font-semibold text-sm sm:text-base border border-purple-200 dark:border-purple-500/30 hover:border-purple-400 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 backdrop-blur-md focus:outline-none focus:ring-2 focus:ring-purple-400 cursor-pointer whitespace-nowrap text-center"
             >
               <Download className="w-4 h-4 text-purple-600 dark:text-amber-300 flex-shrink-0" />
               <span>Descargar CV</span>
@@ -77,16 +79,16 @@ export const HeroSection: React.FC = () => {
           </div>
 
           {/* Métricas de Impacto Directo (Concepto 357) */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 p-5 sm:p-6 rounded-2xl bg-white/85 dark:bg-[#130E24]/80 backdrop-blur-xl border border-purple-200/80 dark:border-purple-500/20 shadow-lg shadow-purple-900/5 dark:shadow-2xl">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4 p-4 sm:p-6 rounded-2xl bg-white/85 dark:bg-[#130E24]/80 backdrop-blur-xl border border-purple-200/80 dark:border-purple-500/20 shadow-lg shadow-purple-900/5 dark:shadow-2xl">
             {siteConfig.stats.map((stat, idx) => (
               <div key={idx} className="flex flex-col">
-                <span className="font-mono text-2xl sm:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-fuchsia-600 to-amber-500 dark:from-purple-400 dark:via-fuchsia-300 dark:to-amber-300">
+                <span className="font-mono text-xl sm:text-2xl md:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-fuchsia-600 to-amber-500 dark:from-purple-400 dark:via-fuchsia-300 dark:to-amber-300">
                   {stat.value}
                 </span>
-                <span className="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200 mt-1">
+                <span className="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200 mt-0.5 sm:mt-1">
                   {stat.label}
                 </span>
-                <span className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-snug hidden sm:block">
+                <span className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 sm:mt-1 leading-snug hidden sm:block">
                   {stat.subtext}
                 </span>
               </div>

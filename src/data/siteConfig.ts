@@ -37,8 +37,8 @@ export const siteConfig: SiteConfig = {
   description: "Especialista en la intersección de pedagogía matemática moderna, computación gráfica en tiempo real (WebGL/Three.js) y diseño web accesible de alto rendimiento.",
   location: "Santiago, Chile / Remoto",
   email: "contacto@juancabello.dev",
-  github: "https://github.com",
-  linkedin: "https://linkedin.com",
+  github: "https://github.com/juanxaviercasa",
+  linkedin: "https://www.linkedin.com/in/xaviercabello/",
   scholar: "https://scholar.google.com",
   cvUrl: "/cv-juan-cabello.pdf",
   concept357: {

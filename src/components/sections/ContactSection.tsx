@@ -77,19 +77,22 @@ export const ContactSection: React.FC = () => {
           </GlassCard>
 
           {/* Tarjeta de Email Directo */}
-          <GlassCard className="p-5 sm:p-6 flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3.5">
-              <div className="p-3 rounded-2xl bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-cyan-400 border border-blue-100 dark:border-white/5">
+          {/* Tarjeta de Email Directo */}
+          <GlassCard className="p-4 sm:p-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="p-2.5 sm:p-3 rounded-2xl bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-cyan-400 border border-blue-100 dark:border-white/5 flex-shrink-0">
                 <Mail className="w-5 h-5" />
               </div>
-              <div>
+              <div className="min-w-0 flex-1">
                 <span className="text-xs font-mono text-slate-500 dark:text-slate-400 block">Correo Principal</span>
-                <span className="text-sm sm:text-base font-semibold text-slate-900 dark:text-slate-100">{siteConfig.email}</span>
+                <span className="text-sm sm:text-base font-semibold text-slate-900 dark:text-slate-100 truncate block" title={siteConfig.email}>
+                  {siteConfig.email}
+                </span>
               </div>
             </div>
             <button
               onClick={handleCopyEmail}
-              className="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white transition-colors text-xs flex items-center gap-1.5 focus:outline-none min-h-[44px]"
+              className="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white transition-colors text-xs flex items-center justify-center gap-1.5 focus:outline-none min-h-[44px] flex-shrink-0 cursor-pointer"
               title="Copiar correo"
             >
               {isCopied ? (
@@ -107,36 +110,36 @@ export const ContactSection: React.FC = () => {
           </GlassCard>
 
           {/* Enlaces Sociales y Académicos */}
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 gap-2 sm:gap-3">
             <a
               href={siteConfig.github}
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => playTick(900)}
-              className="flex items-center justify-center gap-2 p-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-900/60 dark:hover:bg-slate-800/80 border border-slate-200 dark:border-white/5 text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white transition-all text-xs font-mono font-semibold min-h-[44px]"
+              className="flex items-center justify-center gap-1.5 sm:gap-2 px-2 py-3 sm:p-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-900/60 dark:hover:bg-slate-800/80 border border-slate-200 dark:border-white/5 text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white transition-all text-xs font-mono font-semibold min-h-[44px] cursor-pointer"
             >
-              <GithubIcon className="w-4 h-4 text-slate-600 dark:text-slate-400" />
-              <span>GitHub</span>
+              <GithubIcon className="w-4 h-4 text-slate-600 dark:text-slate-400 flex-shrink-0" />
+              <span className="truncate">GitHub</span>
             </a>
             <a
               href={siteConfig.linkedin}
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => playTick(900)}
-              className="flex items-center justify-center gap-2 p-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-900/60 dark:hover:bg-slate-800/80 border border-slate-200 dark:border-white/5 text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white transition-all text-xs font-mono font-semibold min-h-[44px]"
+              className="flex items-center justify-center gap-1.5 sm:gap-2 px-2 py-3 sm:p-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-900/60 dark:hover:bg-slate-800/80 border border-slate-200 dark:border-white/5 text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white transition-all text-xs font-mono font-semibold min-h-[44px] cursor-pointer"
             >
-              <LinkedinIcon className="w-4 h-4 text-blue-600 dark:text-cyan-400" />
-              <span>LinkedIn</span>
+              <LinkedinIcon className="w-4 h-4 text-blue-600 dark:text-cyan-400 flex-shrink-0" />
+              <span className="truncate">LinkedIn</span>
             </a>
             <a
               href={siteConfig.scholar}
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => playTick(900)}
-              className="flex items-center justify-center gap-2 p-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-900/60 dark:hover:bg-slate-800/80 border border-slate-200 dark:border-white/5 text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white transition-all text-xs font-mono font-semibold min-h-[44px]"
+              className="flex items-center justify-center gap-1.5 sm:gap-2 px-2 py-3 sm:p-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-900/60 dark:hover:bg-slate-800/80 border border-slate-200 dark:border-white/5 text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white transition-all text-xs font-mono font-semibold min-h-[44px] cursor-pointer"
             >
-              <BookOpen className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-              <span>Scholar</span>
+              <BookOpen className="w-4 h-4 text-indigo-600 dark:text-indigo-400 flex-shrink-0" />
+              <span className="truncate">Scholar</span>
             </a>
           </div>
         </div>

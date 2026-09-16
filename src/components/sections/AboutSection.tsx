@@ -17,11 +17,11 @@ import { useAudioEngine } from '../../audio/useAudioEngine';
 
 type TabId = 'bento' | 'educacion' | 'tech' | 'filosofia';
 
-const TABS: { id: TabId; label: string; icon: React.FC<{ className?: string }> }[] = [
-  { id: 'bento', label: 'Visión Modular (Bento)', icon: Layers },
-  { id: 'educacion', label: 'Educación & Matemáticas', icon: GraduationCap },
-  { id: 'tech', label: 'Web & Gráficos 3D', icon: Cpu },
-  { id: 'filosofia', label: 'Filosofía Pedagógica', icon: Lightbulb },
+const TABS: { id: TabId; label: string; shortLabel: string; icon: React.FC<{ className?: string }> }[] = [
+  { id: 'bento', label: 'Visión Modular (Bento)', shortLabel: 'Modular (Bento)', icon: Layers },
+  { id: 'educacion', label: 'Educación & Matemáticas', shortLabel: 'Educación STEM', icon: GraduationCap },
+  { id: 'tech', label: 'Web & Gráficos 3D', shortLabel: 'Web & 3D', icon: Cpu },
+  { id: 'filosofia', label: 'Filosofía Pedagógica', shortLabel: 'Filosofía', icon: Lightbulb },
 ];
 
 export const AboutSection: React.FC = () => {
@@ -49,26 +49,29 @@ export const AboutSection: React.FC = () => {
         </p>
       </div>
 
-      {/* Tabs Selector */}
-      <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-slate-100/90 dark:bg-slate-900/70 border border-slate-200 dark:border-white/10 backdrop-blur-md overflow-x-auto mb-10 shadow-sm max-w-2xl">
-        {TABS.map((tab) => {
-          const Icon = tab.icon;
-          const isActive = activeTab === tab.id;
-          return (
-            <button
-              key={tab.id}
-              onClick={() => handleTabChange(tab.id)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/40 ${
-                isActive
-                  ? 'bg-blue-600 text-white dark:bg-cyan-500 dark:text-slate-950 shadow-md shadow-blue-500/20 dark:shadow-cyan-500/20'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-white/80 dark:hover:bg-slate-800/60'
-              }`}
-            >
-              <Icon className="w-4 h-4" />
-              <span>{tab.label}</span>
-            </button>
-          );
-        })}
+      {/* Tabs Selector: 100% Responsivo en Celular, Tablet y Desktop */}
+      <div className="w-full max-w-4xl mb-10">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-1.5 sm:gap-2 p-1.5 rounded-2xl bg-slate-100/90 dark:bg-slate-900/70 border border-slate-200 dark:border-white/10 backdrop-blur-md shadow-sm">
+          {TABS.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => handleTabChange(tab.id)}
+                className={`flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/40 cursor-pointer text-center ${
+                  isActive
+                    ? 'bg-blue-600 text-white dark:bg-cyan-500 dark:text-slate-950 shadow-md shadow-blue-500/20 dark:shadow-cyan-500/20'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-white/80 dark:hover:bg-slate-800/60'
+                }`}
+              >
+                <Icon className="w-4 h-4 flex-shrink-0" />
+                <span className="inline xl:hidden">{tab.shortLabel}</span>
+                <span className="hidden xl:inline whitespace-nowrap">{tab.label}</span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* TAB 1: BENTO GRID MODULAR */}

@@ -7,8 +7,6 @@ import { LabSection } from './components/sections/LabSection';
 import { AboutSection } from './components/sections/AboutSection';
 import { ContactSection } from './components/sections/ContactSection';
 import { Footer } from './components/ui/Footer';
-import { AudioToggle } from './components/ui/AudioToggle';
-import { ThemeToggle } from './components/ui/ThemeToggle';
 import { usePortfolioStore } from './store/usePortfolioStore';
 import { useAudioEngine } from './audio/useAudioEngine';
 
@@ -16,7 +14,7 @@ export const App: React.FC = () => {
   const setScrollProgress = usePortfolioStore((state) => state.setScrollProgress);
   const setActiveSection = usePortfolioStore((state) => state.setActiveSection);
   const theme = usePortfolioStore((state) => state.theme);
-  const { playSectionTone } = useAudioEngine();
+  const { playSectionTone, processScrollDynamics } = useAudioEngine();
 
   const prevSectionRef = useRef<string>('hero');
 
@@ -36,6 +34,7 @@ export const App: React.FC = () => {
       const docHeight = document.documentElement.scrollHeight - window.innerHeight;
       const progress = docHeight > 0 ? Math.min(Math.max(scrollY / docHeight, 0), 1) : 0;
       setScrollProgress(progress);
+      processScrollDynamics(scrollY, docHeight);
 
       // Detección de sección activa basada en posición
       const sections = ['hero', 'proyectos', 'laboratorio', 'sobre-mi', 'contacto'];
@@ -68,7 +67,7 @@ export const App: React.FC = () => {
     handleScroll();
 
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [setScrollProgress, setActiveSection, playSectionTone]);
+  }, [setScrollProgress, setActiveSection, playSectionTone, processScrollDynamics]);
 
   return (
     <div className="relative min-h-screen bg-[#FAF5FF] dark:bg-[#0B0813] text-[#1E1035] dark:text-[#F5F3FF] selection:bg-purple-300 dark:selection:bg-purple-900/60 selection:text-purple-950 dark:selection:text-purple-200 transition-colors duration-300 overflow-x-hidden">
@@ -91,12 +90,6 @@ export const App: React.FC = () => {
 
         {/* Pie de Página */}
         <Footer />
-
-        {/* Dock flotante de controles persistentes: Selector de Tema + Audio (en tablet y desktop) */}
-        <div className="hidden sm:flex fixed bottom-6 right-6 z-40 items-center gap-2.5">
-          <ThemeToggle variant="floating" />
-          <AudioToggle variant="header" />
-        </div>
       </div>
     </div>
   );

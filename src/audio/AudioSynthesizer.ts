@@ -24,9 +24,9 @@ export const SACRED_FREQUENCIES: Record<ConcertFrequency, SacredFrequencyInfo> =
     subtitle: 'Armonía Áurea & Pitagórica',
     scaleDescription: 'Afinación de Verdi y proporción matemática natural (La = 432 Hz)',
     rootNote: 'La (A4)',
-    // Escala soprano neoclásica puramente consonante en Just Intonation (Octava 5 y 6)
-    // [8va (2.0), 9na (2.25), 3ra Mayor (2.5), 5ta (3.0), 6ta Mayor (10/3), 8va alta (4.0), 9na alta (4.5), 3ra alta (5.0)]
-    ratios: [2.0, 2.25, 2.5, 3.0, 10 / 3, 4.0, 4.5, 5.0],
+    // Escala modal pura en Just Intonation anclada en la tónica fundamental (1.0 = 432 Hz)
+    // [Tónica (1.0), 3ra Mayor (1.25), 5ta (1.5), 6ta Mayor (5/3), 8va (2.0), 9na (2.25), 3ra alta (2.5), 5ta alta (3.0)]
+    ratios: [1.0, 1.25, 1.5, 5 / 3, 2.0, 2.25, 2.5, 3.0],
   },
   528: {
     freq: 528,
@@ -34,7 +34,7 @@ export const SACRED_FREQUENCIES: Record<ConcertFrequency, SacredFrequencyInfo> =
     subtitle: 'Frecuencia Milagro & Transformación',
     scaleDescription: 'Solfeggio sagrado MI, resonancia de la geometría del ADN (Do = 528 Hz)',
     rootNote: 'Do (C5)',
-    ratios: [2.0, 2.25, 2.5, 3.0, 10 / 3, 4.0, 4.5, 5.0],
+    ratios: [1.0, 1.25, 1.5, 5 / 3, 2.0, 2.25, 2.5, 3.0],
   },
   396: {
     freq: 396,
@@ -42,8 +42,8 @@ export const SACRED_FREQUENCIES: Record<ConcertFrequency, SacredFrequencyInfo> =
     subtitle: 'Fundamento Telúrico & Liberación',
     scaleDescription: 'Solfeggio UT, enraizamiento, calma profunda y resonancia grave (Sol = 396 Hz)',
     rootNote: 'Sol (G4)',
-    // Modo telúrico apacible con 3ra menor dulce (2.4) y 5ta pura (3.0)
-    ratios: [2.0, 2.25, 2.4, 3.0, 3.2, 4.0, 4.5, 4.8],
+    // Modo telúrico apacible con 3ra menor dulce (1.2) y 5ta pura (1.5)
+    ratios: [1.0, 1.125, 1.2, 1.5, 1.6, 2.0, 2.25, 2.4],
   },
   639: {
     freq: 639,
@@ -52,7 +52,7 @@ export const SACRED_FREQUENCIES: Record<ConcertFrequency, SacredFrequencyInfo> =
     scaleDescription: 'Solfeggio FA, armonía interpersonal y éter luminoso celestial (Mi = 639 Hz)',
     rootNote: 'Mi (E5)',
     // Modo pentatónico lírico consonante con 4ta justa y 6ta mayor
-    ratios: [2.0, 2.25, 2.5, 8 / 3, 3.0, 10 / 3, 4.0, 4.5],
+    ratios: [1.0, 1.125, 1.25, 4 / 3, 1.5, 5 / 3, 2.0, 2.25],
   },
 };
 
@@ -60,12 +60,14 @@ class AudioSynthesizer {
   private ctx: AudioContext | null = null;
   private masterGain: GainNode | null = null;
   private compressor: DynamicsCompressorNode | null = null;
+  private analyser: AnalyserNode | null = null;
 
   // Parámetros activos del concierto
   private currentFreq: ConcertFrequency = 432;
   private isConcertMode: boolean = true;
   private currentHarmonics: number = 3;
   private currentSpeed: number = 0.8;
+  private isMuted: boolean = false;
 
   // Red de espacialización acústica (Reverb / Stereo Cross-Delay)
   private delayNodeL: DelayNode | null = null;
@@ -77,11 +79,12 @@ class AudioSynthesizer {
 
   // Capa 1: Colchón Armónico / Cuerdas Celestes (Pad continuo)
   private ambientGain: GainNode | null = null;
-  private ambientOscs: { osc: OscillatorNode; ratio: number }[] = [];
+  private ambientOscs: { osc: OscillatorNode; ratio: number; gainNode?: GainNode }[] = [];
   private ambientFilter: BiquadFilterNode | null = null;
   private isAmbientPlaying: boolean = false;
   private lfoOsc: OscillatorNode | null = null;
   private lfoGain: GainNode | null = null;
+  private stopTimeoutId: number | null = null;
 
   // Capa 2: Arpegiador Melódico Neoclásico ("Piano de Cristal / Celesta")
   private melodyTimeoutId: number | null = null;
@@ -105,17 +108,24 @@ class AudioSynthesizer {
 
       // Compresor de dinámica suave para masterización sedosa sin saturación
       this.compressor = this.ctx.createDynamicsCompressor();
-      this.compressor.threshold.setValueAtTime(-16, this.ctx.currentTime);
-      this.compressor.knee.setValueAtTime(10, this.ctx.currentTime);
-      this.compressor.ratio.setValueAtTime(3.0, this.ctx.currentTime);
-      this.compressor.attack.setValueAtTime(0.008, this.ctx.currentTime);
-      this.compressor.release.setValueAtTime(0.3, this.ctx.currentTime);
+      this.compressor.threshold.setValueAtTime(-12, this.ctx.currentTime);
+      this.compressor.knee.setValueAtTime(14, this.ctx.currentTime);
+      this.compressor.ratio.setValueAtTime(2.5, this.ctx.currentTime);
+      this.compressor.attack.setValueAtTime(0.015, this.ctx.currentTime);
+      this.compressor.release.setValueAtTime(0.2, this.ctx.currentTime);
 
       this.masterGain = this.ctx.createGain();
-      this.masterGain.gain.setValueAtTime(0.35, this.ctx.currentTime);
+      this.masterGain.gain.setValueAtTime(0.32, this.ctx.currentTime);
 
+      // Analizador de señal en tiempo real (FFT y Osciloscopio)
+      this.analyser = this.ctx.createAnalyser();
+      this.analyser.fftSize = 2048;
+      this.analyser.smoothingTimeConstant = 0.82;
+
+      // Cadena de masterización: Compressor -> Master Gain -> Analyser -> Destination
       this.compressor.connect(this.masterGain);
-      this.masterGain.connect(this.ctx.destination);
+      this.masterGain.connect(this.analyser);
+      this.analyser.connect(this.ctx.destination);
 
       this.initSpatialAcoustics();
 
@@ -130,11 +140,38 @@ class AudioSynthesizer {
     }
   }
 
+  public getAnalyser(): AnalyserNode | null {
+    return this.analyser;
+  }
+
+  public getCompressor(): DynamicsCompressorNode | null {
+    return this.compressor;
+  }
+
+  public getContext(): AudioContext | null {
+    return this.ctx;
+  }
+
   public resume() {
     this.initContext();
     if (this.ctx && this.ctx.state === 'suspended') {
       this.ctx.resume();
     }
+  }
+
+  public setMute(muted: boolean) {
+    this.isMuted = muted;
+    if (!this.ctx || !this.masterGain) return;
+    const now = this.ctx.currentTime;
+    try {
+      this.masterGain.gain.cancelScheduledValues(now);
+      this.masterGain.gain.setValueAtTime(this.masterGain.gain.value, now);
+      if (muted) {
+        this.masterGain.gain.linearRampToValueAtTime(0.0001, now + 0.05);
+      } else {
+        this.masterGain.gain.linearRampToValueAtTime(0.32, now + 0.08);
+      }
+    } catch {}
   }
 
   /**
@@ -144,24 +181,25 @@ class AudioSynthesizer {
     if (!this.ctx || !this.compressor) return;
 
     this.delayNodeL = this.ctx.createDelay();
-    this.delayNodeL.delayTime.setValueAtTime(0.36, this.ctx.currentTime);
+    this.delayNodeL.delayTime.setValueAtTime(0.32, this.ctx.currentTime);
 
     this.delayNodeR = this.ctx.createDelay();
-    this.delayNodeR.delayTime.setValueAtTime(0.54, this.ctx.currentTime);
+    this.delayNodeR.delayTime.setValueAtTime(0.48, this.ctx.currentTime);
 
+    // Ganancias de feedback acotadas estrictamente a 0.22 para evitar acumulación infinita
     this.feedbackGainL = this.ctx.createGain();
-    this.feedbackGainL.gain.setValueAtTime(0.36, this.ctx.currentTime);
+    this.feedbackGainL.gain.setValueAtTime(0.22, this.ctx.currentTime);
 
     this.feedbackGainR = this.ctx.createGain();
-    this.feedbackGainR.gain.setValueAtTime(0.36, this.ctx.currentTime);
+    this.feedbackGainR.gain.setValueAtTime(0.22, this.ctx.currentTime);
 
     // Filtro paso-bajo para simular acústica de madera cálida
     this.reverbFilter = this.ctx.createBiquadFilter();
     this.reverbFilter.type = 'lowpass';
-    this.reverbFilter.frequency.setValueAtTime(1600, this.ctx.currentTime);
+    this.reverbFilter.frequency.setValueAtTime(1400, this.ctx.currentTime);
 
     this.reverbGain = this.ctx.createGain();
-    this.reverbGain.gain.setValueAtTime(0.38, this.ctx.currentTime);
+    this.reverbGain.gain.setValueAtTime(0.26, this.ctx.currentTime);
 
     // Enrutamiento Ping-Pong espacial cruzado
     this.delayNodeL.connect(this.feedbackGainL);
@@ -179,8 +217,10 @@ class AudioSynthesizer {
 
   public sendToSpatialSpace(node: AudioNode) {
     if (this.delayNodeL && this.delayNodeR) {
-      node.connect(this.delayNodeL);
-      node.connect(this.delayNodeR);
+      try {
+        node.connect(this.delayNodeL);
+        node.connect(this.delayNodeR);
+      } catch {}
     }
   }
 
@@ -189,10 +229,31 @@ class AudioSynthesizer {
    */
   public startAmbientSoundscape(freq: ConcertFrequency = 432, concertMode: boolean = true) {
     this.resume();
-    if (!this.ctx || !this.compressor || this.isAmbientPlaying) return;
-
     this.currentFreq = freq;
     this.isConcertMode = concertMode;
+
+    // 1. Cancelar cualquier temporizador de apagado pendiente inmediatamente
+    if (this.stopTimeoutId !== null) {
+      clearTimeout(this.stopTimeoutId);
+      this.stopTimeoutId = null;
+    }
+
+    if (!this.ctx || !this.compressor) return;
+
+    // 2. Si los osciladores ya están vivos y sonando, restablecer suavemente la ganancia
+    if (this.isAmbientPlaying && this.ambientGain && this.ambientOscs.length > 0) {
+      const now = this.ctx.currentTime;
+      try {
+        this.ambientGain.gain.cancelScheduledValues(now);
+        this.ambientGain.gain.setValueAtTime(this.ambientGain.gain.value, now);
+        this.ambientGain.gain.linearRampToValueAtTime(0.09, now + 0.25);
+      } catch {}
+
+      if (this.isConcertMode) {
+        this.startNeoclassicalMelody();
+      }
+      return;
+    }
 
     try {
       const now = this.ctx.currentTime;
@@ -218,23 +279,29 @@ class AudioSynthesizer {
       // Ganancia del colchón armónico balanceada (0.09) para no opacar la melodía
       this.ambientGain = this.ctx.createGain();
       this.ambientGain.gain.setValueAtTime(0.0001, now);
-      this.ambientGain.gain.linearRampToValueAtTime(0.09, now + 1.5);
+      this.ambientGain.gain.linearRampToValueAtTime(0.09, now + 0.5);
 
       this.ambientFilter.connect(this.ambientGain);
       this.ambientGain.connect(this.compressor);
-      this.sendToSpatialSpace(this.ambientGain);
 
-      // Tríada armónica pura en octavas y quintas justas:
-      // Sub-bajo (0.5x), Tónica fundamental (1.0x), Quinta Justa (1.5x), Octava superior (2.0x)
-      // Todo en ondas senoidales puras para máxima dulzura y cero aspereza
-      const ratios = [0.5, 1.0, 1.5, 2.0];
-      this.ambientOscs = ratios.map((ratio) => {
+      // Tríada armónica con la tónica fundamental (1.0x) como raíz dominante (100% de presencia)
+      // para garantizar perfecta correspondencia acústica con la frecuencia seleccionada
+      const partials = [
+        { ratio: 1.0, gain: 1.0 },   // Tónica fundamental protagonista (432 Hz)
+        { ratio: 0.5, gain: 0.45 },  // Sub-bajo de calidez (216 Hz)
+        { ratio: 1.5, gain: 0.28 },  // Quinta armónica dulce (648 Hz)
+        { ratio: 2.0, gain: 0.16 },  // Octava etérea (864 Hz)
+      ];
+      this.ambientOscs = partials.map(({ ratio, gain }) => {
         const osc = this.ctx!.createOscillator();
+        const pGain = this.ctx!.createGain();
+        pGain.gain.setValueAtTime(gain, now);
         osc.type = 'sine';
         osc.frequency.setValueAtTime(freq * ratio, now);
-        osc.connect(this.ambientFilter!);
+        osc.connect(pGain);
+        pGain.connect(this.ambientFilter!);
         osc.start(now);
-        return { osc, ratio };
+        return { osc, ratio, gainNode: pGain };
       });
 
       this.isAmbientPlaying = true;
@@ -308,10 +375,14 @@ class AudioSynthesizer {
    */
   public setConcertMode(enabled: boolean) {
     this.isConcertMode = enabled;
-    if (!this.isAmbientPlaying) return;
 
     if (enabled) {
-      this.startNeoclassicalMelody();
+      this.resume();
+      if (!this.isAmbientPlaying) {
+        this.startAmbientSoundscape(this.currentFreq, true);
+      } else {
+        this.startNeoclassicalMelody();
+      }
     } else {
       this.stopNeoclassicalMelody();
     }
@@ -337,10 +408,10 @@ class AudioSynthesizer {
   private startNeoclassicalMelody() {
     this.stopNeoclassicalMelody();
     this.melodyStep = 0;
-    // Primer nota tras breve silencio contemplativo
+    // Primer nota casi inmediata (40ms) para respuesta táctil instantánea
     this.melodyTimeoutId = window.setTimeout(() => {
       this.scheduleNextMelodyNote();
-    }, 450);
+    }, 40);
   }
 
   private stopNeoclassicalMelody() {
@@ -351,7 +422,11 @@ class AudioSynthesizer {
   }
 
   private scheduleNextMelodyNote() {
-    if (!this.isAmbientPlaying || !this.isConcertMode) return;
+    if (!this.isConcertMode || this.isMuted) return;
+    if (!this.isAmbientPlaying) {
+      this.startAmbientSoundscape(this.currentFreq, true);
+      return;
+    }
 
     const info = SACRED_FREQUENCIES[this.currentFreq] || SACRED_FREQUENCIES[432];
     const ratios = info.ratios;
@@ -397,6 +472,7 @@ class AudioSynthesizer {
    * con transitorio limpio, armónicos dulces y espacialización estéreo.
    */
   public playCrystalPianoNote(freq: number, velocity: number = 0.26) {
+    if (this.isMuted) return;
     this.resume();
     if (!this.ctx || !this.compressor) return;
 
@@ -444,44 +520,74 @@ class AudioSynthesizer {
       osc2.connect(harmonicGain);
       osc3.connect(sparkleGain);
 
-      harmonicGain.connect(noteGain);
-      sparkleGain.connect(noteGain);
+      const voiceMix = this.ctx.createGain();
+      voiceMix.gain.setValueAtTime(1.0, now);
+      noteGain.connect(voiceMix);
+      harmonicGain.connect(voiceMix);
+      sparkleGain.connect(voiceMix);
 
       if (panner) {
-        noteGain.connect(panner);
+        voiceMix.connect(panner);
         panner.connect(this.compressor);
         this.sendToSpatialSpace(panner);
       } else {
-        noteGain.connect(this.compressor);
-        this.sendToSpatialSpace(noteGain);
+        voiceMix.connect(this.compressor);
+        this.sendToSpatialSpace(voiceMix);
       }
 
       osc1.start(now);
       osc2.start(now);
       osc3.start(now);
 
-      osc1.stop(now + 2.25);
-      osc2.stop(now + 2.25);
-      osc3.stop(now + 2.25);
+      const stopTime = now + 2.25;
+      osc1.stop(stopTime);
+      osc2.stop(stopTime);
+      osc3.stop(stopTime);
+
+      osc1.onended = () => {
+        try {
+          osc1.disconnect();
+          osc2.disconnect();
+          osc3.disconnect();
+          noteGain.disconnect();
+          harmonicGain.disconnect();
+          sparkleGain.disconnect();
+          voiceMix.disconnect();
+          panner?.disconnect();
+        } catch {}
+      };
     } catch {}
   }
 
   public stopAmbientSoundscape() {
     this.stopNeoclassicalMelody();
 
-    if (!this.ctx || !this.ambientGain || !this.isAmbientPlaying) return;
+    if (this.stopTimeoutId !== null) {
+      clearTimeout(this.stopTimeoutId);
+      this.stopTimeoutId = null;
+    }
+
+    if (!this.ctx || !this.ambientGain || !this.isAmbientPlaying) {
+      this.isAmbientPlaying = false;
+      return;
+    }
 
     try {
       const now = this.ctx.currentTime;
       // Fade-out suave antes de desconectar
+      this.ambientGain.gain.cancelScheduledValues(now);
       this.ambientGain.gain.setValueAtTime(this.ambientGain.gain.value, now);
-      this.ambientGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.6);
+      this.ambientGain.gain.linearRampToValueAtTime(0.0001, now + 0.2);
 
-      setTimeout(() => {
-        this.ambientOscs.forEach(({ osc }) => {
+      this.stopTimeoutId = window.setTimeout(() => {
+        this.stopTimeoutId = null;
+        this.isAmbientPlaying = false;
+
+        this.ambientOscs.forEach(({ osc, gainNode }) => {
           try {
             osc.stop();
             osc.disconnect();
+            gainNode?.disconnect();
           } catch {}
         });
         this.ambientOscs = [];
@@ -498,8 +604,7 @@ class AudioSynthesizer {
         this.ambientFilter = null;
         this.lfoOsc = null;
         this.lfoGain = null;
-        this.isAmbientPlaying = false;
-      }, 650);
+      }, 250);
     } catch {
       this.isAmbientPlaying = false;
     }

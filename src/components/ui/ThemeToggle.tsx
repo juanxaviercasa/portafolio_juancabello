@@ -6,7 +6,7 @@ import { useAudioEngine } from '../../audio/useAudioEngine';
 interface ThemeToggleProps {
   className?: string;
   showLabel?: boolean;
-  variant?: 'pill' | 'button' | 'floating';
+  variant?: 'pill' | 'button' | 'floating' | 'icon';
 }
 
 export const ThemeToggle: React.FC<ThemeToggleProps> = ({
@@ -32,6 +32,32 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
       playTick(mode === 'light' ? 1150 : 750);
     }
   };
+
+  // Compact Icon variant para Navbar responsivo (desktop, tablet y móvil)
+  if (variant === 'icon' || (variant === 'button' && !showLabel)) {
+    return (
+      <button
+        type="button"
+        onClick={handleToggle}
+        aria-label={isDark ? 'Cambiar a Modo Claro' : 'Cambiar a Modo Oscuro'}
+        title={isDark ? 'Activar Modo Claro' : 'Activar Modo Oscuro'}
+        className={`
+          relative flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-xl cursor-pointer flex-shrink-0
+          bg-purple-50/80 hover:bg-purple-100/90 dark:bg-[#1A1230]/80 dark:hover:bg-[#251842]
+          border border-purple-200/80 dark:border-purple-500/30
+          text-slate-700 dark:text-slate-200
+          transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-purple-400/50 shadow-sm
+          ${className}
+        `}
+      >
+        {isDark ? (
+          <Moon className="w-4 h-4 text-cyan-400 transition-transform hover:scale-110" />
+        ) : (
+          <Sun className="w-4 h-4 text-amber-500 transition-transform hover:rotate-45" />
+        )}
+      </button>
+    );
+  }
 
   // Segmented Pill Switch: 100% obvio e interactivo
   if (variant === 'pill') {
@@ -85,7 +111,7 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
     );
   }
 
-  // Floating variant para acceso inmediato en cualquier posición de scroll
+  // Floating variant para acceso inmediato
   if (variant === 'floating') {
     return (
       <button
@@ -117,7 +143,7 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
     );
   }
 
-  // Single button fallback
+  // Single button fallback with label
   return (
     <button
       type="button"
@@ -126,7 +152,7 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
       title={isDark ? 'Activar Modo Claro' : 'Activar Modo Oscuro'}
       className={`
         group relative flex items-center gap-2 px-3 py-2 rounded-xl cursor-pointer
-        border transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500/40 dark:focus:ring-cyan-400/50
+        border transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500/40 dark:focus:ring-cyan-400/50
         bg-white/90 dark:bg-slate-800/80
         border-slate-200 dark:border-white/10
         text-slate-800 dark:text-slate-200

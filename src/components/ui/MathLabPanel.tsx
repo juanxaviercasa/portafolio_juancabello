@@ -6,6 +6,7 @@ import { useAudioEngine } from '../../audio/useAudioEngine';
 import { SACRED_FREQUENCIES } from '../../audio/AudioSynthesizer';
 import { GlassCard } from './GlassCard';
 import { Latex } from './Latex';
+import { AudioOscilloscope } from './AudioOscilloscope';
 
 const SURFACE_MODES: { id: SurfaceMode; label: string; formula: string }[] = [
   { id: 'clifford', label: 'Fénix Alado 357', formula: 'S^1 \\times S^1 \\subset S^3' },
@@ -76,14 +77,14 @@ export const MathLabPanel: React.FC = () => {
   const setLabParam = usePortfolioStore((state) => state.setLabParam);
   const resetLabParams = usePortfolioStore((state) => state.resetLabParams);
   const isAudioMuted = usePortfolioStore((state) => state.isAudioMuted);
-  const toggleAudio = usePortfolioStore((state) => state.toggleAudio);
   const {
     playTick,
     playLabModulation,
     changeFrequency,
     toggleConcertMode,
     activateAudio,
-    deactivateAudio,
+    toggleAudio,
+    triggerFibonacciCascade,
     audioSettings,
   } = useAudioEngine();
 
@@ -149,15 +150,7 @@ export const MathLabPanel: React.FC = () => {
 
           {/* Indicador y Switch de Concierto Armónico */}
           <button
-            onClick={() => {
-              if (isAudioMuted) {
-                activateAudio();
-                toggleAudio();
-              } else {
-                deactivateAudio();
-                toggleAudio();
-              }
-            }}
+            onClick={() => toggleAudio()}
             title={!isAudioMuted ? 'Hacer clic para pausar el concierto' : 'Hacer clic para activar el concierto'}
             className={`hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-mono border transition-all cursor-pointer ${
               !isAudioMuted
@@ -356,38 +349,45 @@ export const MathLabPanel: React.FC = () => {
         {/* Sección de Orquestación Armónica & Frecuencias Sagradas (Concierto Nueva Era) */}
         <div className="md:col-span-3 pt-4 border-t border-purple-200/70 dark:border-purple-500/20">
           <div className="p-4 sm:p-5 rounded-2xl bg-purple-50/70 dark:bg-[#1A1230]/70 border border-purple-200/80 dark:border-purple-500/30 space-y-4">
-            <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-gradient-to-br from-amber-500/20 to-purple-500/20 border border-amber-500/30 text-amber-500 shadow-sm">
+                <div className="p-2.5 rounded-xl bg-gradient-to-br from-amber-500/20 to-purple-500/20 border border-amber-500/30 text-amber-500 shadow-sm flex-shrink-0">
                   <Music className="w-5 h-5 animate-pulse" />
                 </div>
                 <div>
-                  <h4 className="text-sm sm:text-base font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                  <h4 className="text-sm sm:text-base font-bold text-slate-900 dark:text-slate-100 flex flex-wrap items-center gap-2">
                     <span>Orquestación Armónica // Concierto Nueva Era</span>
                     {!isAudioMuted && (
-                      <span className="flex h-2 w-2 relative">
+                      <span className="flex h-2 w-2 relative flex-shrink-0">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
                         <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
                       </span>
                     )}
                   </h4>
-                  <p className="text-xs text-slate-600 dark:text-slate-300">
+                  <p className="text-xs text-slate-600 dark:text-slate-300 mt-0.5">
                     Sinfonía procedural en tiempo real: frecuencias sagradas, arpegios de piano de cristal y cuerdas etéreas.
                   </p>
                 </div>
               </div>
 
-              {/* Botón Melodía Neoclásica ON/OFF & Estado */}
-              <div className="flex items-center gap-2">
+              {/* Botón Melodía Neoclásica ON/OFF & Cascada Fibonacci */}
+              <div className="flex flex-wrap items-center gap-2">
                 <button
                   onClick={() => {
                     if (isAudioMuted) {
                       activateAudio();
-                      toggleAudio();
-                    } else {
-                      toggleConcertMode();
                     }
+                    triggerFibonacciCascade(8, 'lydian');
                   }}
+                  className="flex items-center gap-1.5 px-3 py-2 min-h-[40px] rounded-xl text-xs font-mono font-semibold transition-all border border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 dark:text-amber-300 cursor-pointer shadow-sm"
+                  title="Disparar cascada orquestal polifónica con secuencia de Fibonacci y escala Lidia"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                  <span>Cascada Fibonacci</span>
+                </button>
+
+                <button
+                  onClick={() => toggleConcertMode()}
                   className={`flex items-center gap-2 px-3.5 py-2 min-h-[40px] rounded-xl text-xs font-mono font-semibold transition-all border cursor-pointer ${
                     !isAudioMuted && audioSettings.isConcertMode
                       ? 'bg-gradient-to-r from-purple-600/20 to-amber-500/20 border-amber-500/50 text-amber-600 dark:text-amber-300 shadow-sm ring-1 ring-amber-400/40'
@@ -396,10 +396,13 @@ export const MathLabPanel: React.FC = () => {
                   title={audioSettings.isConcertMode ? 'Modo Concierto activo (Piano de cristal neoclásico + Cuerdas)' : 'Modo Contemplativo (Drone armónico puro)'}
                 >
                   <Sparkles className={`w-3.5 h-3.5 ${!isAudioMuted && audioSettings.isConcertMode ? 'text-amber-500 animate-spin' : ''}`} />
-                  <span>{audioSettings.isConcertMode ? 'Melodía de Cristal: ON' : 'Melodía de Cristal: OFF'}</span>
+                  <span>{audioSettings.isConcertMode ? 'Melodía: ON' : 'Melodía: OFF'}</span>
                 </button>
               </div>
             </div>
+
+            {/* Pantalla Interactiva de Oscilaciones y Visualizador Espectral Cuántico */}
+            <AudioOscilloscope className="w-full my-1 shadow-lg" />
 
             {/* Grid de 4 Frecuencias Sagradas */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
@@ -409,12 +412,9 @@ export const MathLabPanel: React.FC = () => {
                   <button
                     key={item.freq}
                     onClick={() => {
+                      changeFrequency(item.freq);
                       if (isAudioMuted) {
-                        changeFrequency(item.freq);
                         activateAudio();
-                        toggleAudio();
-                      } else {
-                        changeFrequency(item.freq);
                       }
                     }}
                     title={`${item.name} (${item.note}) — ${item.description}`}
@@ -466,10 +466,7 @@ export const MathLabPanel: React.FC = () => {
                   </span>
                 ) : (
                   <button
-                    onClick={() => {
-                      activateAudio();
-                      toggleAudio();
-                    }}
+                    onClick={() => activateAudio()}
                     className="text-purple-700 dark:text-amber-300 font-semibold hover:underline flex items-center gap-1 cursor-pointer"
                   >
                     <Volume2 className="w-3.5 h-3.5" />
