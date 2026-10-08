@@ -42,11 +42,10 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
         aria-label={isDark ? 'Cambiar a Modo Claro' : 'Cambiar a Modo Oscuro'}
         title={isDark ? 'Activar Modo Claro' : 'Activar Modo Oscuro'}
         className={`
-          relative flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-xl cursor-pointer flex-shrink-0
-          bg-purple-50/80 hover:bg-purple-100/90 dark:bg-[#1A1230]/80 dark:hover:bg-[#251842]
-          border border-purple-200/80 dark:border-purple-500/30
-          text-slate-700 dark:text-slate-200
-          transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-purple-400/50 shadow-sm
+          relative flex items-center justify-center w-11 h-11 rounded-xl cursor-pointer flex-shrink-0
+          bg-[var(--surface)] hover:bg-[var(--surface-soft)]
+          border border-[var(--border)] text-[var(--text)]
+          transition-[background-color,border-color,transform] duration-200 shadow-sm
           ${className}
         `}
       >

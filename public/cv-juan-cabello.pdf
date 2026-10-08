@@ -1,43 +1,244 @@
 %PDF-1.4
+%“Œ‹ž ReportLab Generated PDF document (opensource)
 1 0 obj
-<< /Type /Catalog /Pages 2 0 R >>
+<<
+/F1 2 0 R /F2 3 0 R /F3 9 0 R
+>>
 endobj
 2 0 obj
-<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+<<
+/BaseFont /Helvetica /Encoding /WinAnsiEncoding /Name /F1 /Subtype /Type1 /Type /Font
+>>
 endobj
 3 0 obj
-<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+<<
+/BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding /Name /F2 /Subtype /Type1 /Type /Font
+>>
 endobj
 4 0 obj
-<< /Length 260 >>
-stream
-BT
-/F1 22 Tf
-50 720 Td
-(Juan Cabello - Curriculo Vitae) Tj
-/F1 12 Tf
-0 -30 Td
-(Educador Matematico e Ingeniero Frontend) Tj
-0 -20 Td
-(Especialidad: Computacion Grafica WebGL, Shaders GLSL, Didactica STEM) Tj
-0 -20 Td
-(Contacto: contacto@juancabello.dev | Portafolio Interactivo) Tj
-ET
-endstream
+<<
+/A <<
+/S /URI /Type /Action /URI (mailto:juan@cabellosalirrosas.com)
+>> /Border [ 0 0 0 ] /Rect [ 231.4967 735.6447 341.6551 746.2047 ] /Subtype /Link /Type /Annot
+>>
 endobj
 5 0 obj
-<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+<<
+/A <<
+/S /URI /Type /Action /URI (https://juan.cabellosalirrosas.com/)
+>> /Border [ 0 0 0 ] /Rect [ 51.35433 707.0047 87.25833 717.2047 ] /Subtype /Link /Type /Annot
+>>
+endobj
+6 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://github.com/juanxaviercasa)
+>> /Border [ 0 0 0 ] /Rect [ 94.34733 707.0047 120.7993 717.2047 ] /Subtype /Link /Type /Annot
+>>
+endobj
+7 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://www.linkedin.com/in/xaviercabello/)
+>> /Border [ 0 0 0 ] /Rect [ 127.8883 707.0047 160.0183 717.2047 ] /Subtype /Link /Type /Annot
+>>
+endobj
+8 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://www.tusclases.pe/profesores/juan-xavier-cabello-salirrosas.htm)
+>> /Border [ 0 0 0 ] /Rect [ 167.1073 707.0047 219.0763 717.2047 ] /Subtype /Link /Type /Annot
+>>
+endobj
+9 0 obj
+<<
+/BaseFont /ZapfDingbats /Name /F3 /Subtype /Type1 /Type /Font
+>>
+endobj
+10 0 obj
+<<
+/Annots [ 4 0 R 5 0 R 6 0 R 7 0 R 8 0 R ] /Contents 28 0 R /MediaBox [ 0 0 595.2756 841.8898 ] /Parent 27 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 
+  /Trans <<
+
+>> /Type /Page
+>>
+endobj
+11 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://mundossimulados.online)
+>> /Border [ 0 0 0 ] /Rect [ 51.35433 722.0047 99.54083 732.2047 ] /Subtype /Link /Type /Annot
+>>
+endobj
+12 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://github.com/juanxaviercasa/mundos-simulados)
+>> /Border [ 0 0 0 ] /Rect [ 106.6298 722.0047 147.2598 732.2047 ] /Subtype /Link /Type /Annot
+>>
+endobj
+13 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://transformacionesgeometricas.sistemazenit.com/)
+>> /Border [ 0 0 0 ] /Rect [ 51.35433 658.6547 99.54083 668.8547 ] /Subtype /Link /Type /Annot
+>>
+endobj
+14 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://github.com/juanxaviercasa/transformaciones_geometricas)
+>> /Border [ 0 0 0 ] /Rect [ 106.6298 658.6547 147.2598 668.8547 ] /Subtype /Link /Type /Annot
+>>
+endobj
+15 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://tablaperiodica.sistemazenit.com/)
+>> /Border [ 0 0 0 ] /Rect [ 51.35433 606.8047 99.54083 617.0047 ] /Subtype /Link /Type /Annot
+>>
+endobj
+16 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://github.com/juanxaviercasa/tabla-periodica)
+>> /Border [ 0 0 0 ] /Rect [ 106.6298 606.8047 147.2598 617.0047 ] /Subtype /Link /Type /Annot
+>>
+endobj
+17 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://nubeparapymes.online/)
+>> /Border [ 0 0 0 ] /Rect [ 51.35433 543.4547 99.54083 553.6547 ] /Subtype /Link /Type /Annot
+>>
+endobj
+18 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://github.com/juanxaviercasa/nube-para-pymes)
+>> /Border [ 0 0 0 ] /Rect [ 106.6298 543.4547 147.2598 553.6547 ] /Subtype /Link /Type /Annot
+>>
+endobj
+19 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://sanmarcos.sistemazenit.com/)
+>> /Border [ 0 0 0 ] /Rect [ 51.35433 480.1047 99.54083 490.3047 ] /Subtype /Link /Type /Annot
+>>
+endobj
+20 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://github.com/juanxaviercasa/rumbo-san-marcos)
+>> /Border [ 0 0 0 ] /Rect [ 106.6298 480.1047 147.2598 490.3047 ] /Subtype /Link /Type /Annot
+>>
+endobj
+21 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://github.com/juanxaviercasa/zenit-ai-tutor)
+>> /Border [ 0 0 0 ] /Rect [ 51.35433 417.3922 91.98433 428.3922 ] /Subtype /Link /Type /Annot
+>>
+endobj
+22 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (mailto:juan@cabellosalirrosas.com)
+>> /Border [ 0 0 0 ] /Rect [ 51.35433 350.9647 166.5199 362.0047 ] /Subtype /Link /Type /Annot
+>>
+endobj
+23 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://www.tiktok.com/@zenitmath)
+>> /Border [ 0 0 0 ] /Rect [ 251.1783 350.9647 320.7119 362.0047 ] /Subtype /Link /Type /Annot
+>>
+endobj
+24 0 obj
+<<
+/Annots [ 11 0 R 12 0 R 13 0 R 14 0 R 15 0 R 16 0 R 17 0 R 18 0 R 19 0 R 20 0 R 
+  21 0 R 22 0 R 23 0 R ] /Contents 29 0 R /MediaBox [ 0 0 595.2756 841.8898 ] /Parent 27 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 
+  /Trans <<
+
+>> /Type /Page
+>>
+endobj
+25 0 obj
+<<
+/PageMode /UseNone /Pages 27 0 R /Type /Catalog
+>>
+endobj
+26 0 obj
+<<
+/Author (Juan Xavier Cabello Salirrosas) /CreationDate (D:20261007000111-05'00') /Creator (\(unspecified\)) /Keywords () /ModDate (D:20261007000111-05'00') /Producer (ReportLab PDF Library - \(opensource\)) 
+  /Subject (Curr\355culum profesional) /Title (CV \204 Juan Xavier Cabello Salirrosas) /Trapped /False
+>>
+endobj
+27 0 obj
+<<
+/Count 2 /Kids [ 10 0 R 24 0 R ] /Type /Pages
+>>
+endobj
+28 0 obj
+<<
+/Filter [ /ASCII85Decode /FlateDecode ] /Length 2809
+>>
+stream
+Gau`Uh,iUW&qBYZW(2%be!&')3W!h/@0RM_!F6dpBg[gG,\a]NYcHsdn[H(C+K.9iMKdAd#J/BTWqt7i6,CEfeGLC7!(Tu_g8@2QR,.jdM$qcUoVMkC*`Po:iorsA[86/9V6g]M$#IosJ[h9d[R&12H!7nOqE>3jb5iNE[VL6bncTFu$C8Od>7.O+bAMSF9:2qc-m^[8_2[ged(KJrjTY'9Z'b`dK#HcQi\9D#>IIl[)r3J+SVr^5r<9&/0`>#CG(Eo%=R[_Y4P+QqYhR+)g]41ia2IQ9_"E6)P'^DST&L3o%A)YochBg%Jd\B!pZmBAhGstr@'U27p)9_A\Ib9g!nHj+_nuP.^t6:0[K5)?0KT:AO\$Xe:M5L0A`jK)4'.'k(qQ95hJd]LPKn,$*hQ4hPEhYF[Vm%g0=Ei+&uD[9W>j9oS.IVdiC`FEjGR3<SuJJF47(4L#Sj#jPiY$TB]gS&-2>MCA#Q^n2@'6>\!?4m2]J]oOcjrRQPl1bjC0RE/Nmr,>TmaR0pS8lTJWhA2q/9G.%r7;L*)M-h+#Xm<nf08Qop_V+AJi$6>NYsg.&/9.r[H^$#@A5WuJG(P4LD(A1dlkMhh<]561]E+`k'sDW$*-\1aGCc^.=@+qJAPs,K\jcdjF<,+6)oiSk^p28aRfLAUfJbHG(B%eT5pE?18d!QQFYjf[/Q\eJD=KV>_4j+kQApXhM?pr%7/bo(9(M=3ZU&Z$NT]\8jR+-8`lh<*4&[TD(F0u2BA*D)O&3uJE/Tl1WHIfCbcn&=\;rLlc3nC\q4q#n*T-XrIbLo38jBpib4rO2GId`q`*e/S,e6Ptg/qn:,0r2_\j5i&]$ol^JmU@)22EO9%ML38uMe;m^R0B*i/0*^"=B/=d;T`L9LJcEFA9(4YM9HWBMM^*6%peD/6O,A&!PgGa4MD(?#5Jq&pMBu>laRokFP4#P)P=<\/U`^gmGYh>!%-[qfZ+7S5f.0RE[YcaOrke0!.6rRF7H)d$WE:d<^u2L4).j5I[9sS&D&t1C4G**Y03MP]R<i*oER0nZ$-JP!F(1/'icU@*Cs?p_@GoIBN"SCu,G'`06Y::9+!`O?m$9fU&u09Z&YBmOa)j`Xq2A0i][akeVI+9m@^B;q0bYGF_c1AK$^kTD*>(ktfVLAtHOjAZ5hmUo9Z%3QVXY89m%0i0HIL_RGL2aCGM'IkrLCH3Hc4YUAuJ?)U`FdX$[r;o)phT:%76lR=d0&LmD'OEHtSW8FiO&HC>33+W%l,a13>*TAc&ZdP?uM,NLVkEH-O/j"(?eG3O,UhK#;(QgDG+>j^BM8TV87B:2IR7n#fApbAMO`:BO9!/g@q]2#9h=j/95s+u/4n`MLr1`s&)'8h@"8$!X_3qYTo,\.(iM1>++jj''B<[r$(O'##PR-6i1iia8*-JtD]S#17#HE`Ln(WUt%06#s.g-P+a[hq=6$mhFCZG9::sMR'pQGBs/[E_m+JNb5q/DhYrHCXP<E\Q/)e=NkkOp2/3Pa8B80*XdC^jdf6pq+,,n>k,p)V;,R;`)QmAhM7n4=m!ZK0OCi^8r9c1.!4n6$<rTnfhe+5q%\0NnF,=d"JK`;\drc_b<l?)773^4q@n"d?^pDDD"<3]Q^+C:VY7s^g:$8oCM.h(b&K+GefL9&<P`.\C(/IhW`QO*h0'dIe=/Y+?E=\(/EBN4\X+St]>j\e@$:0Z8kA$M`kjNHQ+_%9c/34pLSb6)h?Y-'Pp9=9*@5`"H/>R"*4%#\Q6hmQmNif+m=i0>VQTV&h*#G!9"s%@lg=>-hIt\+]f[6!V^hJbQ6Z0]#G@dFf\22gq`$/L(5=Bjj][DHCk`FMA`7R#93tmp$:I0+HmVNQ[q+`<Ls\ZeQ%X#ek69^V_)Z\bkY@1!95\=C6N(5pa%/R^2Q6U[fA2os]sk@pj&e.0o390P0SSVD[>V$Xs&!L*mFGgM0WgCpl`+:GCX-.g!?K_!V3rZ&^du.;hL-lIO)F&jkZ0:F..m80FKm&6@l`-[%CG/KDj\cGZnigf1*U\S1He;aBV)IVVKdQNq"mQDeo;g\\))FFfcOqs_0u`V<m1]HUf<^K0_JPXn!.7!CX\A':mVj^$nC^HQ_if^:\u`OD7/%7lDn._e[l&q)dY[CDZR'U@3_7Lc]2mo"\UC?le4#%6BmOVS?mDiC3OK4D<HHcI,d!@\M?Y.C1><KV!FDXG#gc;K3jl8-@0jJIH_V(GXK77:a^,K.l)R>mkrLORE!Sa\tL,KHQ$/]cc;rSmbe;M\[)K^",*DC>E'S\mK9a52q4`;X6X+tn4S9.g39tX*6)cQle=(BO76N:TZK%:+nU7$k8A,C<hhY1J":!l6uS'mVWuV@%(Ak,=`F.:4=.$JGfB0S/Jp7Yp,+Mo7N1s)X8-CjX`<hrA7,>Sd4\r[o!&5l;.=mpIW-.b0]n1*QR.P:&@j]ms"$Pq%R(0G8BJDOakDb/7dFa/Q)rF/Hk'F2(K`BSBR*>1Z"]3.&+rM,rUYrj*ZXo^3pmu1:3M[=2Uj;e_B2V"i=-6J/MaNg?R,,-r25FsMPnP>U2uo`))`n*)6uKb2[fth)7a5hf0orEHP)aHUJ,[0rI(Am<8rb2k*G"@[MkJ7.rq'#`.\!lHDBk%:&/MEeVS\'\^pq.`$!G3CJn?1`Ersgc>jt?a%%Ca*pJF(%/&:l#\bR76K/H?MN-k5QlI8!=?=pb8;^A:hu\JK(.'kB+nY6bp89/!q`js$]J5#g3(Tdq7j9IC.b>t:Uh.kUY[k!mX`(j-^nnj,AP&go-&`u'$'hT.'"_mP<b=7=X++o1L)M'0(BZDb#6~>endstream
+endobj
+29 0 obj
+<<
+/Filter [ /ASCII85Decode /FlateDecode ] /Length 1761
+>>
+stream
+Gb!l_bAu>q'Sc@2MR-8d%8;9T0=s9.j&&:S'MD/iN].LQ.nDpW!D+U*e+\BWA3-JBN*WVL*d\;.^q&C@cN@#5n:roOdgY0b&l)e4TF@-q5Q_Y7EXM!QPKtVg2\G$:<O-sH=;"FK"7[VUK*4`\]d*foEW,->EZ0ZX$9TDD6K3N8S32G?Rp+nBQe3d%@3elOCBFs<Q*mJ'-/>^YK$cXkBiX3BJ&L&kbe[\.AL4E(0TUp)\+u"*d#H0OY[:f6&XL0mhqk*ZHP\Xf4qE#_U=^j;$R1NF?[M"@k9l2hM:qqNHL:fTnR`V!"7!;!;r7aCQs\1rT9#;E"Y@rskG-F8G',^7/KQljgk@HI\3R]g70*W[gB=f,/d-M;&e[)DYf;==3a\?h(+Q@BVPichg5ikCq^e?%0^r9O.)[BG*2"o!ke^<#N"qV_b.&b.^%"*9<@T+K=]&6E<@/M#m\!Nj,r8fX[E@<?AL]P`J[r.UW[)D7<PlVmMQL-Aoal#C8lKlmLOMDi*%,]c<7m1\6<F8#<D&1%p)ssJ/8JP%/3$6k,2\:KoM<$/R$&M)@IudX\@srEh$=Yg&VgdHR*[hRqZe#TpmuQD,0oY(-(H5%J'dKu>*QTl[`NC]3X-l=hVg@AXLXO/AX\DZ/c4r8mVV6p[8n6q,@DFRQle<W3IJY<Db`ifKO0="`'NI(,U2bl'%2104;W?rIYV?`%2[Fd%![6Q^uH;>>*5/\`b#ZPZ@iU"18Kk0#`.\qHl*#m:S*UE4&t\PaT<ERqI<%02:^!i+abu3WFW#jp,f4e%3Q>0FX=C_rl;;Y.!SqajDB0Da@0iD;;i#-h/A!cjWVp#at%1''@dl-:QO^be;=/.O<((%gj;Mr_nbRVGQQQ-V1fRJeOG=g3B8XnkRf98M>+>[c:IjrY0Xiu)R\?tNFH(Y]L9aZg);j!9eEcsA6r]fTt.a#9BG=TjVlZQC#me&Sr!NRh_ofa@E7?:["WOpNm4:3D(g:MYS6%i^__,LHqn,4ESNG@G^Q^[Q#+4So=I]i&7WqKY2uPhnHahg?R%PW;PDR:&@)@+GU%:_d+hO/2JKk"pC9AXCIP,).JAS#CU`[F@bM#d844DpVDo]b)h[.0PEm]=c*>)g`Z>n:?rgHJg)?mpdQCp.1qWga3=;Y`S;PN.mi$F5darWMEbCIR/qm$seC-\rG"k2ll+%RpBW;6VV;)D`MZ_s2Ci]8g=h0Rsnqep_[`!?sYsmN)E*ik]!=qfeLSbD-&5K90&U"hS<P?D8]g^ab9+1[kPTW455!=N_XtCNW4cg/JUm$KKJ92?V,^E.M%RSl,n9Cc/QFX$RC]_cu"fb('53j-d++VAJfMnldl4t[H\@NDmCTX;KHMLK<8\>gMFZ,j#iC\R$a@G<7N^Rcd>eHW!(7VF115cQJT3X;PDenT>*TEbi,LZJV+[P4h[$=hT2R`0AZ,F5n*D9=2M*<UlhT<R\$\BFQHR/656uIe5(?1t+OCGKaSB?^DFppLpZ=H(#b\("@=-MlZHo?`R0Uc9!cUQ+2O/)?"KLC7<-#o?N\9p-o@G>[rKdI+_=g7A36BiuAFh0[D,'!tL9T8anBh:j:+a.ZH@Vj1ebA*ktp!A#7VDI^1Y(hHs_;&_1E=e#F2F+7]RRH:_&p0"iVa?f^M\2lS:9d`mS%FqKhH&X0ZC)\Z:K8`r#K$!>iJR.@DYN5%"FdF@rd3AU[$?E)2NjN1)0e9R<[E7UQik?*pc*MId#lW6VO$MrdX8X`o&$N(SGWc"h"Vl~>endstream
 endobj
 xref
-0 6
+0 30
 0000000000 65535 f 
-0000000009 00000 n 
-0000000058 00000 n 
-0000000115 00000 n 
-0000000244 00000 n 
-0000000555 00000 n 
+0000000061 00000 n 
+0000000112 00000 n 
+0000000219 00000 n 
+0000000331 00000 n 
+0000000516 00000 n 
+0000000703 00000 n 
+0000000888 00000 n 
+0000001082 00000 n 
+0000001304 00000 n 
+0000001387 00000 n 
+0000001635 00000 n 
+0000001818 00000 n 
+0000002021 00000 n 
+0000002227 00000 n 
+0000002442 00000 n 
+0000002635 00000 n 
+0000002837 00000 n 
+0000003019 00000 n 
+0000003221 00000 n 
+0000003409 00000 n 
+0000003612 00000 n 
+0000003813 00000 n 
+0000003999 00000 n 
+0000004185 00000 n 
+0000004497 00000 n 
+0000004567 00000 n 
+0000004900 00000 n 
+0000004968 00000 n 
+0000007869 00000 n 
 trailer
-<< /Size 6 /Root 1 0 R >>
+<<
+/ID 
+[<f7ce0f960e8689c967a2973eb2b327d6><f7ce0f960e8689c967a2973eb2b327d6>]
+% ReportLab generated PDF document -- digest (opensource)
+
+/Info 26 0 R
+/Root 25 0 R
+/Size 30
+>>
 startxref
-625
+9722
 %%EOF

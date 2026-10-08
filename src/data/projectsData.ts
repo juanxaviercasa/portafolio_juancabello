@@ -1,114 +1,99 @@
+export type ProjectCategory = 'Educación STEM' | 'Matemáticas' | 'Producto Web' | 'Inteligencia Artificial';
+
 export interface Project {
   id: string;
   title: string;
   subtitle: string;
-  category: 'Educación 3D' | 'Matemáticas Puras' | 'Diseño Web' | 'Herramienta Pedagógica';
-  impact: string;
+  category: ProjectCategory;
   description: string;
-  mathConcept: string;
+  context: string;
   technologies: string[];
   features: string[];
-  metrics: { label: string; value: string }[];
-  demoUrl: string;
+  facts: { label: string; value: string }[];
+  demoUrl?: string;
   repoUrl: string;
-  accentColor: string;
+  mathConcept?: string;
 }
 
 export const projectsData: Project[] = [
   {
-    id: 'mathflow-3d',
-    title: 'MathFlow 3D: Cálculo Multivariable Visual',
-    subtitle: 'Laboratorio de variedades diferenciales y campos vectoriales en tiempo real',
-    category: 'Educación 3D',
-    impact: 'Utilizado por más de 18,000 estudiantes universitarios en cursos de Cálculo III',
-    description: 'Plataforma web pedagógica interactiva que renderiza campos de gradientes, rotacionales y divergencias en superficies paramétricas continuas. Permite a los estudiantes soltar partículas de prueba para visualizar intuitivamente el Teorema de Stokes y de la Divergencia.',
-    mathConcept: '\\nabla \\times \\mathbf{F} = \\left( \\frac{\\partial F_z}{\\partial y} - \\frac{\\partial F_y}{\\partial z} \\right) \\mathbf{i} + \\dots',
-    technologies: ['React', 'Three.js', 'GLSL Shaders', 'Web Audio API', 'Tailwind CSS'],
-    features: [
-      'Deformación de mallas con shaders en GPU a 60 FPS fijos',
-      'Integración numérica de trayectorias con método Runge-Kutta 4',
-      'Sonificación de la magnitud del flujo escalar con micro-osciladores',
-      'Compatibilidad táctil en tablets y móviles'
-    ],
-    metrics: [
-      { label: 'Estudiantes Activos', value: '18,500+' },
-      { label: 'Tasa de Aprobación', value: '+32%' },
-      { label: 'FPS Promedio', value: '60 FPS' }
-    ],
-    demoUrl: 'https://example.com/mathflow-3d',
-    repoUrl: 'https://github.com/example/mathflow-3d',
-    accentColor: '#38bdf8'
+    id: 'mundos-simulados',
+    title: 'Mundos Simulados',
+    subtitle: 'Laboratorio de física computacional en el navegador',
+    category: 'Educación STEM',
+    description: 'Transforma ecuaciones diferenciales y leyes de la física clásica en simulaciones visuales que pueden explorarse sin instalar software.',
+    context: 'Diseñado para docencia y divulgación: permite modificar variables como gravedad, fricción, masa o carga y observar el comportamiento resultante.',
+    technologies: ['JavaScript', 'HTML5 Canvas', 'WebGL', 'CSS'],
+    features: ['Sistemas dinámicos', 'Controles interactivos', 'Ejecución local en el navegador'],
+    facts: [{ label: 'Área', value: 'Física' }, { label: 'Formato', value: 'Laboratorio' }, { label: 'Acceso', value: 'Web' }],
+    demoUrl: 'https://mundossimulados.online',
+    repoUrl: 'https://github.com/juanxaviercasa/mundos-simulados',
+    mathConcept: 'F = ma',
   },
   {
-    id: 'fourier-resonance-lab',
-    title: 'Fourier Resonance Lab',
-    subtitle: 'Síntesis espectral interactiva de sonido y curvas armónicas complejas',
-    category: 'Matemáticas Puras',
-    impact: 'Elegido Mejor Recurso Abierto de Aprendizaje STEM 2025',
-    description: 'Visualizador de series de Fourier continuas y discretas acoplado a un motor de síntesis de audio procedural. Los usuarios dibujan cualquier forma de onda en 2D y el algoritmo descompone la función en círculos epicicloidales armónicos y genera el timbre auditivo en tiempo real.',
-    mathConcept: 'f(t) = \\frac{a_0}{2} + \\sum_{n=1}^\\infty \\left( a_n \\cos(n\\omega t) + b_n \\sin(n\\omega t) \\right)',
-    technologies: ['TypeScript', 'Canvas API', 'Web Audio API', 'FFT Algorithms', 'Vite'],
-    features: [
-      'Cálculo de coeficientes mediante Transformada Rápida de Fourier (FFT)',
-      'Síntesis aditiva con hasta 64 armónicos simultáneos',
-      'Generación de trayectorias complejas con números imaginarios',
-      'Exportación a código LaTeX y audio WAV sin comprimir'
-    ],
-    metrics: [
-      { label: 'Armónicos en Vivo', value: '64' },
-      { label: 'Latencia de Audio', value: '< 12ms' },
-      { label: 'Colegios Vinculados', value: '140+' }
-    ],
-    demoUrl: 'https://example.com/fourier-lab',
-    repoUrl: 'https://github.com/example/fourier-lab',
-    accentColor: '#818cf8'
+    id: 'transformaciones-geometricas',
+    title: 'Transformaciones Geométricas',
+    subtitle: 'Visualizador 2D/3D de álgebra lineal',
+    category: 'Matemáticas',
+    description: 'Laboratorio visual para comprender rotaciones, traslaciones, homotecias y transformaciones matriciales mediante respuesta gráfica en tiempo real.',
+    context: 'Conecta la expresión algebraica con su significado geométrico para reducir la dependencia de la memorización mecánica.',
+    technologies: ['TypeScript', 'Canvas', 'WebGL', 'Vite'],
+    features: ['Matrices editables', 'Visualización 2D/3D', 'Controles responsivos'],
+    facts: [{ label: 'Área', value: 'Álgebra' }, { label: 'Vista', value: '2D / 3D' }, { label: 'Lenguaje', value: 'TypeScript' }],
+    demoUrl: 'https://transformacionesgeometricas.sistemazenit.com/',
+    repoUrl: 'https://github.com/juanxaviercasa/transformaciones_geometricas',
+    mathConcept: 'R(\\theta)=\\begin{pmatrix}\\cos\\theta&-\\sin\\theta\\\\\\sin\\theta&\\cos\\theta\\end{pmatrix}',
   },
   {
-    id: 'topo-morph-geometry',
-    title: 'TopoMorph: Topología y Variedades 4D',
-    subtitle: 'Exploración de variedades no orientables y proyecciones del hiperespacio',
-    category: 'Educación 3D',
-    impact: 'Implementado en asignaturas de Geometría Diferencial y Topología Algebraica',
-    description: 'Simulador tridimensional que proyecta variedades de cuatro dimensiones (como el Toro de Clifford, la Botella de Klein y la Superficie de Boy) a $\\mathbb{R}^3$. El usuario puede cortar rebanadas topológicas y visualizar la característica de Euler en tiempo real.',
-    mathConcept: '\\chi = V - E + F = 2 - 2g',
-    technologies: ['React Three Fiber', 'Rapier3D Physics', 'GLSL', 'Zustand', 'TypeScript'],
-    features: [
-      'Proyección estereográfica de 4D a 3D mediante rotaciones en planos SO(4)',
-      'Cálculo de normales analíticas para renderizado fotorrealista de Fresnel',
-      'Detección de auto-intersecciones de variedades',
-      'Modo de inspección radiográfica con wireframe computado'
-    ],
-    metrics: [
-      { label: 'Variedades 4D', value: '12 Modelos' },
-      { label: 'Tiempo de Carga', value: '< 0.4s' },
-      { label: 'Universidades', value: '9' }
-    ],
-    demoUrl: 'https://example.com/topomorph',
-    repoUrl: 'https://github.com/example/topomorph',
-    accentColor: '#34d399'
+    id: 'tabla-periodica',
+    title: 'Tabla Periódica Interactiva',
+    subtitle: 'Explorador de elementos y tendencias atómicas',
+    category: 'Educación STEM',
+    description: 'Aplicación pedagógica para consultar los 118 elementos, comparar propiedades y reconocer tendencias periódicas mediante filtros y mapas de calor.',
+    context: 'Organiza información química compleja en una experiencia visual que funciona en móvil, tablet y escritorio.',
+    technologies: ['JavaScript', 'CSS Grid', 'HTML', 'Diseño responsivo'],
+    features: ['118 elementos', 'Búsqueda y filtros', 'Mapas de propiedades'],
+    facts: [{ label: 'Catálogo', value: '118' }, { label: 'Área', value: 'Química' }, { label: 'Interacción', value: 'Filtros' }],
+    demoUrl: 'https://tablaperiodica.sistemazenit.com/',
+    repoUrl: 'https://github.com/juanxaviercasa/tabla-periodica',
+    mathConcept: 'Z = p^+',
   },
   {
-    id: 'stem-adaptive-platform',
-    title: 'Plataforma Pedagógica STEM Adaptativa',
-    subtitle: 'Generador procedural de problemas de cálculo con renderizado KaTeX accesible',
-    category: 'Herramienta Pedagógica',
-    impact: 'Más de 120,000 ejercicios matemáticos generados y evaluados automáticamente',
-    description: 'Sistema web de evaluación formativa para estudiantes de ingeniería que utiliza árboles de sintaxis abstracta (AST) para generar problemas algebraicos con soluciones paso a paso parametrizadas, evitando la memorización ciega.',
-    mathConcept: '\\mathcal{L}\\{f(t)\\} = \\int_0^\\infty e^{-st} f(t) dt',
-    technologies: ['Next.js', 'Tailwind CSS', 'KaTeX', 'PostgreSQL', 'MathJS'],
-    features: [
-      'Motor de álgebra computacional en el cliente para verificación simbólica',
-      'Explicaciones pedagógicas adaptadas al tipo de error del estudiante',
-      'Panel analítico para docentes con mapas de calor de dificultad conceptual',
-      'Cumplimiento total con estándares de accesibilidad WCAG 2.1 AAA'
-    ],
-    metrics: [
-      { label: 'Ejercicios Resueltos', value: '120k+' },
-      { label: 'Tiempo de Feedback', value: 'Instantáneo' },
-      { label: 'Accesibilidad', value: '100 / 100' }
-    ],
-    demoUrl: 'https://example.com/stem-adaptive',
-    repoUrl: 'https://github.com/example/stem-adaptive',
-    accentColor: '#fbbf24'
-  }
+    id: 'nube-para-pymes',
+    title: 'Nube para Pymes',
+    subtitle: 'Herramientas prácticas para pequeños negocios',
+    category: 'Producto Web',
+    description: 'Colección de utilidades web gratuitas para preparar cotizaciones, calcular precios, generar documentos y resolver tareas operativas frecuentes.',
+    context: 'Reduce fricción para pequeñas empresas con herramientas directas, sin instalación y sin exigir una cuenta para empezar.',
+    technologies: ['JavaScript', 'HTML', 'CSS', 'WordPress'],
+    features: ['Calculadoras', 'Generadores de documentos', 'Herramientas SEO y productividad'],
+    facts: [{ label: 'Público', value: 'Pymes' }, { label: 'Modelo', value: 'Gratuito' }, { label: 'Acceso', value: 'Sin cuenta' }],
+    demoUrl: 'https://nubeparapymes.online/',
+    repoUrl: 'https://github.com/juanxaviercasa/nube-para-pymes',
+  },
+  {
+    id: 'rumbo-san-marcos',
+    title: 'Rumbo San Marcos',
+    subtitle: 'Evaluación diagnóstica para postulantes',
+    category: 'Educación STEM',
+    description: 'Plataforma de diagnóstico que adapta la evaluación a la carrera elegida y convierte resultados en una ruta de estudio priorizada.',
+    context: 'Integra navegación de preguntas, cronómetro, análisis de brechas y revisión explicada para preparar el ingreso a la UNMSM.',
+    technologies: ['JavaScript', 'HTML', 'CSS', 'Arquitectura modular'],
+    features: ['Evaluación por carrera', 'Análisis de fortalezas', 'Ruta de estudio'],
+    facts: [{ label: 'Objetivo', value: 'UNMSM' }, { label: 'Método', value: 'Diagnóstico' }, { label: 'Salida', value: 'Ruta' }],
+    demoUrl: 'https://sanmarcos.sistemazenit.com/',
+    repoUrl: 'https://github.com/juanxaviercasa/rumbo-san-marcos',
+  },
+  {
+    id: 'zenit-ai-tutor',
+    title: 'Zenit AI Tutor',
+    subtitle: 'Tutor educativo con evidencia y límites explícitos',
+    category: 'Inteligencia Artificial',
+    description: 'Prototipo de tutor con recuperación aumentada por contexto que separa evidencia, explicación e incertidumbre en cada respuesta.',
+    context: 'Explora una IA educativa responsable: fuentes visibles, validación, privacidad y control de costos en lugar de respuestas opacas.',
+    technologies: ['Python', 'FastAPI', 'Next.js', 'PostgreSQL', 'Docker'],
+    features: ['RAG con fuentes', 'Evaluación de respuestas', 'Arquitectura full stack'],
+    facts: [{ label: 'Backend', value: 'FastAPI' }, { label: 'Datos', value: 'pgvector' }, { label: 'Estado', value: 'Prototipo' }],
+    repoUrl: 'https://github.com/juanxaviercasa/zenit-ai-tutor',
+  },
 ];

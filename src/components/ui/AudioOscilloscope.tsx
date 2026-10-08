@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Activity, BarChart3, Disc, Radio, Sparkles, Volume2, VolumeX, Maximize2, Zap } from 'lucide-react';
 import { useAudioEngine } from '../../audio/useAudioEngine';
+import { usePortfolioStore } from '../../store/usePortfolioStore';
 
 export type VisualizerMode = 'waveform' | 'spectrum' | 'lissajous' | 'polar';
 export type PhosphorTheme = 'amber' | 'violet' | 'cyan' | 'emerald';
@@ -168,7 +169,7 @@ const drawSpectrum = (
   gain: number,
   fundamentalHz: number = 432
 ) => {
-  const barCount = 48;
+  const barCount = Math.max(24, Math.min(64, Math.floor(width / 12)));
   const barWidth = (width / barCount) * 0.75;
   const gap = (width / barCount) * 0.25;
 
@@ -243,9 +244,18 @@ const drawLissajous = (
   const quarterLength = Math.floor(timeData.length / 4);
   const count = Math.min(500, quarterLength);
 
+  // Normaliza únicamente la representación visual: con señales suaves la
+  // figura seguía siendo matemáticamente correcta, pero casi imperceptible.
+  let peak = 0;
   for (let i = 0; i < count; i++) {
-    const sampleX = timeData[i] * gain;
-    const sampleY = timeData[i + 32] * gain; // Desfase temporal de fase estéreo
+    peak = Math.max(peak, Math.abs(timeData[i]), Math.abs(timeData[i + 32]));
+  }
+  const autoScale = peak > 0.001 ? Math.min(8, 0.72 / peak) : 1;
+  const displayGain = autoScale * gain;
+
+  for (let i = 0; i < count; i++) {
+    const sampleX = Math.max(-1, Math.min(1, timeData[i] * displayGain));
+    const sampleY = Math.max(-1, Math.min(1, timeData[i + 32] * displayGain)); // Desfase temporal de fase estéreo
 
     const x = centerX + sampleX * radius;
     const y = centerY - sampleY * radius;
@@ -323,9 +333,10 @@ export const AudioOscilloscope: React.FC<{ className?: string }> = ({ className 
 
   const [mode, setMode] = useState<VisualizerMode>('waveform');
   const [sensitivity, setSensitivity] = useState<number>(1.0);
-  const [theme, setTheme] = useState<PhosphorTheme>('amber');
   const [activeHarmonicLabel, setActiveHarmonicLabel] = useState<string>('Tónica Fundamental');
   const [rmsDb, setRmsDb] = useState<number>(-60);
+  const theme = usePortfolioStore((state) => state.labParams.colorTheme);
+  const setLabParam = usePortfolioStore((state) => state.setLabParam);
 
   const {
     getAnalyser,
@@ -345,18 +356,38 @@ export const AudioOscilloscope: React.FC<{ className?: string }> = ({ className 
     if (!ctx) return;
 
     let isRunning = true;
+    let isVisible = true;
     let rotationAngle = 0;
+    let timeData = new Float32Array(0);
+    let freqData = new Uint8Array(0);
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const observer = new IntersectionObserver(([entry]) => {
+      isVisible = entry.isIntersecting;
+    }, { rootMargin: '200px' });
+    observer.observe(canvas);
 
     const render = () => {
       if (!isRunning) return;
 
-      const dpr = window.devicePixelRatio || 1;
-      const width = canvas.clientWidth;
-      const height = canvas.clientHeight;
+      if (!isVisible || document.hidden) {
+        animationFrameRef.current = requestAnimationFrame(render);
+        return;
+      }
 
-      if (canvas.width !== width * dpr || canvas.height !== height * dpr) {
-        canvas.width = width * dpr;
-        canvas.height = height * dpr;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const width = Math.round(canvas.clientWidth);
+      const height = Math.round(canvas.clientHeight);
+
+      if (width < 1 || height < 1) {
+        animationFrameRef.current = requestAnimationFrame(render);
+        return;
+      }
+
+      const pixelWidth = Math.round(width * dpr);
+      const pixelHeight = Math.round(height * dpr);
+      if (canvas.width !== pixelWidth || canvas.height !== pixelHeight) {
+        canvas.width = pixelWidth;
+        canvas.height = pixelHeight;
       }
 
       ctx.save();
@@ -383,8 +414,8 @@ export const AudioOscilloscope: React.FC<{ className?: string }> = ({ className 
       }
 
       const bufferLength = analyser.fftSize;
-      const timeData = new Float32Array(bufferLength);
-      const freqData = new Uint8Array(analyser.frequencyBinCount);
+      if (timeData.length !== bufferLength) timeData = new Float32Array(bufferLength);
+      if (freqData.length !== analyser.frequencyBinCount) freqData = new Uint8Array(analyser.frequencyBinCount);
 
       analyser.getFloatTimeDomainData(timeData);
       analyser.getByteFrequencyData(freqData);
@@ -458,7 +489,7 @@ export const AudioOscilloscope: React.FC<{ className?: string }> = ({ className 
           drawLissajous(ctx, width, height, timeData, color.primary, color.glow, sensitivity);
           break;
         case 'polar':
-          rotationAngle += 0.015;
+          rotationAngle += reduceMotion ? 0 : 0.015;
           drawPolar(ctx, width, height, freqData, color.primary, color.glow, sensitivity, rotationAngle);
           break;
       }
@@ -471,6 +502,7 @@ export const AudioOscilloscope: React.FC<{ className?: string }> = ({ className 
 
     return () => {
       isRunning = false;
+      observer.disconnect();
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
@@ -480,28 +512,33 @@ export const AudioOscilloscope: React.FC<{ className?: string }> = ({ className 
   const currentColor = THEMES[theme];
 
   return (
-    <div className={`relative rounded-3xl overflow-hidden border border-purple-200/80 dark:border-purple-500/30 bg-[#0E091C]/90 backdrop-blur-xl shadow-2xl ${className}`}>
+    <div
+      data-od-id="audio-visualizer"
+      data-visualizer-theme={theme}
+      style={{ '--viz-accent': currentColor.primary, '--viz-glow': currentColor.glow } as React.CSSProperties}
+      className={`audio-visualizer-shell relative min-w-0 overflow-hidden rounded-3xl border bg-[#0E091C]/90 backdrop-blur-xl ${className}`}
+    >
       {/* Barra de Control Superior */}
-      <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-3.5 border-b border-purple-500/20 bg-[#140D26]/70 text-xs font-mono">
-        <div className="flex items-center gap-2.5">
-          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-purple-500/30 bg-purple-950/40 text-purple-200 font-bold">
-            <Radio className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
-            <span>PANTALLA DE OSCILACIONES // 357</span>
-          </div>
+      <div className="audio-visualizer-bar grid gap-3 border-b px-3 py-3 text-xs font-mono sm:px-5 sm:py-4">
+        <div className="flex min-w-0 flex-wrap items-center justify-between gap-2.5">
+          <div className="flex min-w-0 flex-wrap items-center gap-2">
+            <div className="flex min-h-9 items-center gap-1.5 rounded-lg border border-purple-500/30 bg-purple-950/40 px-2.5 py-1 text-purple-100 font-bold">
+              <Radio className="h-3.5 w-3.5 shrink-0 text-amber-400" aria-hidden="true" />
+              <span className="truncate">Visualizador de sonido</span>
+            </div>
 
-          {/* Sincronicidad estricta entre la Tónica Fundamental f0 y el armónico activo */}
-          <div className={`flex items-center gap-2 px-2.5 py-1 rounded-md border text-[11px] font-semibold ${currentColor.badge}`}>
-            <span className="font-bold text-slate-900 dark:text-white">
-              f₀: {isMuted ? '---' : `${audioSettings.fundamentalFreq} Hz`}
-            </span>
-            {!isMuted && (
-              <span className="text-[10px] opacity-80 border-l border-current/40 pl-2 font-normal truncate max-w-[200px] sm:max-w-none">
-                {activeHarmonicLabel}
+            <div className={`flex min-h-9 min-w-0 items-center gap-2 rounded-lg border px-2.5 py-1 text-[11px] font-semibold ${currentColor.badge}`}>
+              <span className="shrink-0 font-bold text-slate-100">
+                f₀: {isMuted ? '—' : `${audioSettings.fundamentalFreq} Hz`}
               </span>
-            )}
+              {!isMuted && (
+                <span className="max-w-[13rem] truncate border-l border-current/40 pl-2 text-[10px] font-normal opacity-80">
+                  {activeHarmonicLabel}
+                </span>
+              )}
+            </div>
           </div>
-
-          <div className="hidden sm:flex items-center gap-1 text-slate-400 text-[11px]">
+          <div className="flex items-center gap-1 text-[11px] text-slate-400">
             <span>RMS:</span>
             <span className={rmsDb > -20 ? 'text-amber-400 font-bold' : 'text-slate-300'}>
               {isMuted ? '-∞' : `${rmsDb} dB`}
@@ -510,79 +547,89 @@ export const AudioOscilloscope: React.FC<{ className?: string }> = ({ className 
         </div>
 
         {/* Selector de Modo de Visualización */}
-        <div className="flex items-center gap-1 bg-black/40 p-1 rounded-xl border border-purple-500/20">
+        <div className="grid w-full grid-cols-4 gap-1 rounded-xl border border-purple-500/20 bg-black/40 p-1" role="group" aria-label="Tipo de gráfico de audio">
           <button
+            type="button"
             onClick={() => setMode('waveform')}
-            className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs transition-all cursor-pointer ${
+            aria-pressed={mode === 'waveform'}
+            className={`audio-visualizer-tab flex min-w-0 items-center justify-center gap-1 rounded-lg px-2 py-1 text-xs transition-colors cursor-pointer ${
               mode === 'waveform'
-                ? 'bg-purple-600/80 text-white font-bold shadow-sm'
+                ? 'font-bold'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
             title="Osciloscopio Temporal V(t)"
           >
-            <Activity className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Onda V(t)</span>
+            <Activity className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+            <span className="hidden min-[520px]:inline truncate">Onda V(t)</span>
           </button>
 
           <button
+            type="button"
             onClick={() => setMode('spectrum')}
-            className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs transition-all cursor-pointer ${
+            aria-pressed={mode === 'spectrum'}
+            className={`audio-visualizer-tab flex min-w-0 items-center justify-center gap-1 rounded-lg px-2 py-1 text-xs transition-colors cursor-pointer ${
               mode === 'spectrum'
-                ? 'bg-purple-600/80 text-white font-bold shadow-sm'
+                ? 'font-bold'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
             title="Espectro FFT de Fourier F(ω)"
           >
-            <BarChart3 className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Fourier F(ω)</span>
+            <BarChart3 className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+            <span className="hidden min-[520px]:inline truncate">Fourier F(ω)</span>
           </button>
 
           <button
+            type="button"
             onClick={() => setMode('lissajous')}
-            className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs transition-all cursor-pointer ${
+            aria-pressed={mode === 'lissajous'}
+            className={`audio-visualizer-tab flex min-w-0 items-center justify-center gap-1 rounded-lg px-2 py-1 text-xs transition-colors cursor-pointer ${
               mode === 'lissajous'
-                ? 'bg-purple-600/80 text-white font-bold shadow-sm'
+                ? 'font-bold'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
             title="Fase Estéreo & Lissajous Φ(x,y)"
           >
-            <Maximize2 className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Lissajous</span>
+            <Maximize2 className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+            <span className="hidden min-[520px]:inline truncate">Lissajous</span>
           </button>
 
           <button
+            type="button"
             onClick={() => setMode('polar')}
-            className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs transition-all cursor-pointer ${
+            aria-pressed={mode === 'polar'}
+            className={`audio-visualizer-tab flex min-w-0 items-center justify-center gap-1 rounded-lg px-2 py-1 text-xs transition-colors cursor-pointer ${
               mode === 'polar'
-                ? 'bg-purple-600/80 text-white font-bold shadow-sm'
+                ? 'font-bold'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
             title="Resonancia Armónica Cuántica Polar r(θ)"
           >
-            <Disc className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Polar r(θ)</span>
+            <Disc className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+            <span className="hidden min-[520px]:inline truncate">Polar r(θ)</span>
           </button>
         </div>
       </div>
 
       {/* Pantalla del Osciloscopio (Canvas WebGL / 2D) */}
-      <div className="relative w-full h-[220px] sm:h-[260px] bg-[#07040E]">
+      <div className="relative aspect-[16/7] min-h-[180px] max-h-[300px] w-full bg-[#07040E]">
         <canvas
           ref={canvasRef}
           className="w-full h-full block"
           style={{ width: '100%', height: '100%' }}
+          role="img"
+          aria-label="Visualizador de la señal de audio generada por el laboratorio matemático"
         />
 
         {/* Overlay cuando el audio está silenciado */}
         {isMuted && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 backdrop-blur-xs text-center p-4">
-            <VolumeX className="w-8 h-8 text-purple-400 mb-2 opacity-80" />
-            <p className="text-xs sm:text-sm font-mono text-purple-200 font-semibold mb-3">
+            <VolumeX className="mb-2 h-8 w-8 text-[var(--viz-accent)] opacity-80" />
+            <p className="mb-3 text-xs font-semibold text-slate-100 sm:text-sm font-mono">
               Pantalla Acústica en Reposo // Haz de Electrones en Standby
             </p>
             <button
               onClick={() => activateAudio()}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono font-bold bg-gradient-to-r from-amber-500 to-purple-600 hover:from-amber-400 hover:to-purple-500 text-white shadow-lg cursor-pointer transition-transform active:scale-95"
+              className="flex items-center gap-2 rounded-xl bg-[var(--viz-accent)] px-4 py-2 text-xs font-bold text-slate-950 shadow-lg transition-transform active:scale-95 cursor-pointer font-mono"
             >
               <Zap className="w-3.5 h-3.5" />
               <span>Activar Concierto & Oscilaciones</span>
@@ -599,17 +646,18 @@ export const AudioOscilloscope: React.FC<{ className?: string }> = ({ className 
       </div>
 
       {/* Barra de Ajustes Inferior (Sensibilidad, Fósforo y Disparadores Musicales) */}
-      <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-3 border-t border-purple-500/20 bg-[#140D26]/70 text-xs font-mono">
+      <div className="audio-visualizer-bar grid gap-3 border-t px-3 py-3 text-xs font-mono sm:px-5 lg:grid-cols-[auto_auto_1fr] lg:items-center">
         {/* Controles de Sensibilidad de Entrada */}
-        <div className="flex items-center gap-2">
-          <span className="text-slate-400 text-[11px]">Ganancia:</span>
+        <div className="flex min-w-0 flex-wrap items-center gap-1.5">
+          <span className="mr-1 text-[11px] text-slate-400">Ganancia</span>
           {[0.5, 1.0, 1.5, 2.0].map((gain) => (
             <button
               key={gain}
               onClick={() => setSensitivity(gain)}
-              className={`px-2 py-0.5 rounded text-[11px] transition-all cursor-pointer ${
+              aria-pressed={sensitivity === gain}
+              className={`audio-visualizer-gain min-w-11 rounded-lg border border-transparent px-2 py-1 text-[11px] transition-colors cursor-pointer ${
                 sensitivity === gain
-                  ? 'bg-purple-500/30 border border-purple-400 text-purple-200 font-bold'
+                  ? 'font-bold'
                   : 'text-slate-400 hover:text-slate-200 bg-black/20'
               }`}
             >
@@ -619,33 +667,26 @@ export const AudioOscilloscope: React.FC<{ className?: string }> = ({ className 
         </div>
 
         {/* Selector de Color de Fósforo */}
-        <div className="flex items-center gap-2">
-          <span className="text-slate-400 text-[11px]">Fósforo:</span>
+        <div className="flex min-w-0 flex-wrap items-center gap-1">
+          <span className="mr-1 text-[11px] text-slate-400">Color</span>
           {(['amber', 'violet', 'cyan', 'emerald'] as PhosphorTheme[]).map((col) => (
             <button
               key={col}
-              onClick={() => setTheme(col)}
-              className={`w-4 h-4 rounded-full border transition-all cursor-pointer ${
-                theme === col ? 'scale-125 ring-2 ring-white/60' : 'opacity-60 hover:opacity-100'
+              onClick={() => setLabParam('colorTheme', col)}
+              aria-label={`Usar fósforo ${col}`}
+              aria-pressed={theme === col}
+              className={`grid h-11 w-11 place-items-center rounded-lg border transition-[background-color,border-color,opacity] cursor-pointer ${
+                theme === col ? 'border-white/60 bg-white/10' : 'border-transparent opacity-70 hover:bg-white/5 hover:opacity-100'
               }`}
-              style={{
-                backgroundColor:
-                  col === 'amber'
-                    ? '#f59e0b'
-                    : col === 'violet'
-                    ? '#a855f7'
-                    : col === 'cyan'
-                    ? '#38bdf8'
-                    : '#10b981',
-                borderColor: 'rgba(255,255,255,0.4)',
-              }}
               title={`Fósforo ${col}`}
-            />
+            >
+              <span className="h-4 w-4 rounded-full ring-1 ring-white/50" style={{ backgroundColor: THEMES[col].primary }} aria-hidden="true" />
+            </button>
           ))}
         </div>
 
         {/* Acciones de Prueba Sonora Inmediata */}
-        <div className="flex items-center gap-2">
+        <div className="flex min-w-0 flex-wrap items-center gap-2 lg:justify-end">
           <button
             onClick={() => {
               if (isMuted) activateAudio();
@@ -672,7 +713,8 @@ export const AudioOscilloscope: React.FC<{ className?: string }> = ({ className 
 
           <button
             onClick={() => toggleAudio()}
-            className={`p-1.5 rounded-lg border transition-all cursor-pointer ${
+            aria-label={!isMuted ? 'Silenciar audio' : 'Activar audio'}
+            className={`grid h-11 w-11 place-items-center rounded-lg border transition-colors cursor-pointer ${
               !isMuted
                 ? 'border-amber-500/40 bg-amber-500/20 text-amber-300'
                 : 'border-purple-500/30 bg-purple-900/30 text-slate-400 hover:text-white'

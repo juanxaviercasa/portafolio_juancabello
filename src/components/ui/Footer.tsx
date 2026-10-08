@@ -1,62 +1,37 @@
 import React from 'react';
-import { ArrowUp, Heart } from 'lucide-react';
+import { ArrowUp, ExternalLink } from 'lucide-react';
 import { siteConfig } from '../../data/siteConfig';
 import { useAudioEngine } from '../../audio/useAudioEngine';
-import { Latex } from './Latex';
 
 export const Footer: React.FC = () => {
   const { playTick } = useAudioEngine();
-
-  const scrollToTop = () => {
-    playTick(1200);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  const year = new Intl.DateTimeFormat('es-PE', { year: 'numeric' }).format(new Date());
 
   return (
-    <footer className="relative border-t border-purple-200/80 dark:border-purple-500/20 bg-white dark:bg-[#0B0813] py-10 sm:py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-300">
-      <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-6 sm:gap-8">
-        {/* Identidad FÉNIX 357 y Euler */}
-        <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
-          <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 sm:gap-2.5 mb-2">
-            <span className="font-mono font-bold text-slate-900 dark:text-white text-base sm:text-lg tracking-wider">
-              {siteConfig.name.toUpperCase()}
-            </span>
-            <span className="text-purple-500 font-mono font-bold">//</span>
-            <span className="font-mono font-bold tracking-[0.18em] sm:tracking-[0.2em] text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-fuchsia-500 to-amber-500 dark:from-purple-400 dark:via-fuchsia-300 dark:to-amber-400 text-base sm:text-lg">
-              {siteConfig.brandName}
-            </span>
-            <span className="text-purple-400 dark:text-purple-500 hidden sm:inline">&middot;</span>
-            <span className="text-xs text-purple-700 dark:text-amber-300 bg-purple-50 dark:bg-purple-950/60 px-3 py-1 rounded-full border border-purple-200 dark:border-purple-500/30 shadow-sm font-mono select-none">
-              <Latex math="e^{i\pi} + 1 = 0" />
-            </span>
-          </div>
-          <p className="text-xs sm:text-sm text-purple-900/70 dark:text-purple-300/70 font-mono tracking-wide max-w-xl">
-            3 Pilares (Educación &middot; Math &middot; WebGL) &middot; 5 Frecuencias &middot; 7 Dimensiones
+    <footer className="border-t border-[var(--border)] bg-[var(--surface)] px-4 py-10">
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-7 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <strong className="font-display text-lg">{siteConfig.name}</strong>
+          <p className="mt-1 max-w-xl text-sm text-[var(--text-muted)]">{siteConfig.role} · {siteConfig.location}</p>
+          <p className="mt-3 text-xs text-[var(--text-muted)]">
+            Desarrollado por{' '}
+            <a
+              href="https://xavier.cabellosalirrosas.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => playTick(1050)}
+              className="inline-flex min-h-11 items-center gap-1 font-semibold text-[var(--text)] underline decoration-[var(--border)] underline-offset-2 transition-colors hover:text-[var(--accent)] hover:decoration-[var(--accent)]"
+            >
+              Xavier Cabello
+              <ExternalLink className="inline h-3 w-3 opacity-75" aria-hidden="true" />
+            </a>
           </p>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-xl">
-            Diseñado y construido con Three.js, Shaders GLSL, Web Audio API y React.
-          </p>
+          <p className="mt-1 text-xs text-[var(--text-muted)]">© {year} · Código del portafolio disponible con licencia MIT.</p>
         </div>
-
-        {/* Créditos y Botón Arriba */}
-        <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-end gap-4 sm:gap-6 w-full lg:w-auto">
-          <p className="flex flex-wrap items-center justify-center lg:justify-end gap-1.5 text-xs sm:text-sm text-slate-600 dark:text-slate-300 text-center lg:text-right leading-normal">
-            <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
-              Hecho con
-              <Heart className="w-4 h-4 text-fuchsia-500 dark:text-amber-400 fill-fuchsia-500/30 dark:fill-amber-400/30 animate-pulse" />
-            </span>
-            <span className="whitespace-normal sm:whitespace-nowrap">
-              para la educación matemática abierta
-            </span>
-          </p>
-
-          <button
-            onClick={scrollToTop}
-            className="p-2.5 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl bg-purple-50 hover:bg-purple-100 dark:bg-[#130E24] dark:hover:bg-[#1C1335] text-purple-700 dark:text-purple-300 hover:text-purple-950 dark:hover:text-white border border-purple-200 dark:border-purple-500/30 hover:border-purple-400 dark:hover:border-purple-400/60 transition-all focus:outline-none cursor-pointer shadow-sm hover:shadow-purple-500/20 flex-shrink-0"
-            aria-label="Volver arriba"
-            title="Volver arriba"
-          >
-            <ArrowUp className="w-4 h-4" />
+        <div className="flex flex-wrap items-center gap-2">
+          <a className="btn-secondary" href={siteConfig.github} target="_blank" rel="noopener noreferrer">GitHub <ExternalLink className="h-4 w-4" aria-hidden="true" /></a>
+          <button type="button" className="btn-secondary" onClick={() => { playTick(1150); window.scrollTo({ top: 0, behavior: 'smooth' }); }} aria-label="Volver al inicio">
+            <ArrowUp className="h-4 w-4" aria-hidden="true" /> Arriba
           </button>
         </div>
       </div>

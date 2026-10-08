@@ -1,3 +1,5 @@
+const assetUrl = (path: string) => `${import.meta.env.BASE_URL}${path}`;
+
 export interface SiteConfig {
   name: string;
   brandName: string;
@@ -7,100 +9,87 @@ export interface SiteConfig {
   description: string;
   location: string;
   email: string;
+  phone: string;
   github: string;
   linkedin: string;
-  scholar: string;
+  tiktok: string;
+  teachingProfile: string;
   cvUrl: string;
   concept357: {
     pillars: { title: string; desc: string }[];
     frequencies: { id: string; name: string; href: string }[];
     dimensions: { label: string; value: string; desc: string }[];
   };
-  stats: {
-    label: string;
-    value: string;
-    subtext: string;
-  }[];
+  stats: { label: string; value: string; subtext: string }[];
   pedagogicalPrinciples: {
     title: string;
+    simpleMotto: string;
     formula: string;
     description: string;
   }[];
 }
 
 export const siteConfig: SiteConfig = {
-  name: "Juan Cabello",
-  brandName: "FÉNIX 357",
-  brandFullName: "JUAN CABELLO // FÉNIX 357",
-  role: "Educador Matemático & Ingeniero Web Frontend",
-  tagline: "Donde la abstracción matemática renace como experiencia visual pedagógica.",
-  description: "Especialista en la intersección de pedagogía matemática moderna, computación gráfica en tiempo real (WebGL/Three.js) y diseño web accesible de alto rendimiento.",
-  location: "Santiago, Chile / Remoto",
-  email: "contacto@juancabello.dev",
-  github: "https://github.com/juanxaviercasa",
-  linkedin: "https://www.linkedin.com/in/xaviercabello/",
-  scholar: "https://scholar.google.com",
-  cvUrl: "/cv-juan-cabello.pdf",
+  name: 'Juan Xavier Cabello Salirrosas',
+  brandName: 'FÉNIX 357',
+  brandFullName: 'JUAN CABELLO // FÉNIX 357',
+  role: 'Educador Matemático & Desarrollador Web',
+  tagline: 'Convierto ideas matemáticas y necesidades reales en experiencias web claras, interactivas y accesibles.',
+  description:
+    'Bachiller en Matemática, docente de ciencias y creador de productos web educativos. Integro didáctica, desarrollo frontend y visualización interactiva.',
+  location: 'Lima, Perú · Disponible para trabajo remoto',
+  email: 'juan@cabellosalirrosas.com',
+  phone: '+51 925 475 034',
+  github: 'https://github.com/juanxaviercasa',
+  linkedin: 'https://www.linkedin.com/in/xaviercabello/',
+  tiktok: 'https://www.tiktok.com/@zenitmath',
+  teachingProfile: 'https://www.tusclases.pe/profesores/juan-xavier-cabello-salirrosas.htm',
+  cvUrl: assetUrl('cv-juan-cabello.pdf'),
   concept357: {
     pillars: [
-      { title: "Educación", desc: "Didáctica matemática intuitiva y pedagogía activa" },
-      { title: "Matemáticas", desc: "Topología, cálculo multivariable y física de fluidos" },
-      { title: "Diseño Web", desc: "Computación gráfica en GPU, WebGL y shaders de 60 FPS" }
+      { title: 'Educación', desc: 'Experiencias de aprendizaje orientadas a la comprensión' },
+      { title: 'Matemáticas', desc: 'Rigor, visualización y resolución de problemas' },
+      { title: 'Producto Web', desc: 'Interfaces accesibles, responsivas y mantenibles' },
     ],
     frequencies: [
-      { id: "01", name: "Génesis", href: "#hero" },
-      { id: "02", name: "Obras", href: "#proyectos" },
-      { id: "03", name: "Laboratorio 357", href: "#laboratorio" },
-      { id: "04", name: "Trayectoria", href: "#sobre-mi" },
-      { id: "05", name: "Resonancia", href: "#contacto" }
+      { id: '01', name: 'Inicio', href: '#hero' },
+      { id: '02', name: 'Proyectos', href: '#proyectos' },
+      { id: '03', name: 'Laboratorio', href: '#laboratorio' },
+      { id: '04', name: 'Trayectoria', href: '#sobre-mi' },
+      { id: '05', name: 'Contacto', href: '#contacto' },
     ],
     dimensions: [
-      { label: "Estudiantes Impactados", value: "45,000+", desc: "A través de plataformas interactivas universitarias" },
-      { label: "Simuladores Matemáticos", value: "28+", desc: "Desarrollados con Three.js, WebGL y Shaders GLSL" },
-      { label: "Frecuencia Fundamental", value: "432 Hz", desc: "Afinación pitagórica del motor de audio procedural" },
-      { label: "Tasa de Refresco GPU", value: "60 FPS", desc: "Evaluación analítica en Vertex Shaders sin sobrecarga" },
-      { label: "Variedades Topológicas", value: "7 Modos", desc: "Superficies algebraicas computadas analíticamente" },
-      { label: "Años de Docencia", value: "8+ Años", desc: "Cátedras de Cálculo y Álgebra Lineal en Ingeniería" },
-      { label: "Latencia de Cómputo", value: "< 16ms", desc: "Pipeline paralelo optimizado para dispositivos móviles" }
-    ]
+      { label: 'Enfoque', value: 'Educación + Web', desc: 'Producto digital con intención pedagógica' },
+      { label: 'Modalidad', value: 'Remoto', desc: 'Colaboración desde Lima, Perú' },
+      { label: 'Especialidad', value: 'STEM', desc: 'Matemáticas, ciencias y tecnología educativa' },
+    ],
   },
   stats: [
-    {
-      label: "Estudiantes Impactados",
-      value: "45,000+",
-      subtext: "A través de plataformas interactivas y cursos universitarios"
-    },
-    {
-      label: "Simuladores Matemáticos",
-      value: "28+",
-      subtext: "En tiempo real con WebGL, Shaders y Web Audio"
-    },
-    {
-      label: "Rendimiento Gráfico",
-      value: "60 FPS",
-      subtext: "Optimizado en dispositivos móviles y de bajo consumo"
-    },
-    {
-      label: "Experiencia Pedagógica",
-      value: "8+ Años",
-      subtext: "Docencia en Cálculo, Álgebra Lineal y Computación"
-    }
+    { label: 'Formación', value: 'Matemática', subtext: 'Bachiller por la Universidad Nacional de Educación' },
+    { label: 'Experiencia', value: '2018–2026', subtext: 'Docencia escolar y preuniversitaria' },
+    { label: 'Producto', value: 'Web', subtext: 'Aplicaciones responsivas e interactivas' },
   ],
   pedagogicalPrinciples: [
     {
-      title: "Comprensión Intuitiva Previa al Formalismo",
-      formula: "\\lim_{\\Delta x \\to 0} \\frac{f(x+\\Delta x) - f(x)}{\\Delta x}",
-      description: "El estudiante primero experimenta la razón de cambio geométricamente mediante deformación visual antes de memorizar la regla de derivación simbólica."
+      title: 'Comprensión antes que memorización',
+      simpleMotto: 'Primero observar y relacionar; después formalizar',
+      formula: 'e^{i\\theta} = \\cos\\theta + i\\sin\\theta',
+      description:
+        'La representación visual y la manipulación guiada ayudan a construir significado antes de introducir la notación formal.',
     },
     {
-      title: "Interactividad Bidireccional Sin Fricción",
-      formula: "e^{i\\theta} = \\cos\\theta + i\\sin\\theta",
-      description: "Manipular una variable matemática debe reflejarse inmediatamente tanto en la respuesta auditiva armónica como en la proyección espacial."
+      title: 'Respuesta inmediata',
+      simpleMotto: 'Cada acción debe producir una consecuencia clara',
+      formula: 'f(x + \\Delta x) - f(x)',
+      description:
+        'Una interfaz educativa debe mostrar de inmediato qué cambió, por qué cambió y cómo volver a intentarlo.',
     },
     {
-      title: "Accesibilidad e Inclusión Cognitiva",
-      formula: "\\int_{-\\infty}^{\\infty} e^{-x^2} dx = \\sqrt{\\pi}",
-      description: "Las herramientas pedagógicas de vanguardia deben correr a 60 FPS sin requerir hardware de gama alta ni descargas de software adicionales."
-    }
-  ]
+      title: 'Accesibilidad desde el diseño',
+      simpleMotto: 'Aprender no debería depender del dispositivo',
+      formula: '\\int_{-\\infty}^{\\infty} e^{-x^2} dx = \\sqrt{\\pi}',
+      description:
+        'El contenido debe seguir siendo legible, navegable y útil con teclado, pantallas pequeñas y movimiento reducido.',
+    },
+  ],
 };

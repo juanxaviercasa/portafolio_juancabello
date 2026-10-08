@@ -32,3 +32,15 @@ dist-ssr
 screenshots_*/
 audit_*.cjs
 .deploy_report.json
+
+# Private CV sources and generated working files
+CVCabello.docx
+output/
+
+# Local image references not selected for the production site
+public/images/fenix_1.jpg
+public/images/fenix_2.jpg
+public/images/fenix_3.jpg
+public/images/fenix_4.jpg
+public/images/fenix_5.jpg
+public/images/math-design-workspace.webp

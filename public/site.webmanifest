@@ -1,0 +1,13 @@
+{
+  "name": "Juan Cabello — Portafolio",
+  "short_name": "Juan Cabello",
+  "description": "Educación matemática y desarrollo web",
+  "lang": "es-PE",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f6f8fb",
+  "theme_color": "#0067c5",
+  "icons": [
+    { "src": "./favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

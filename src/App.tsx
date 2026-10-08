@@ -1,5 +1,4 @@
-import React, { useEffect, useRef } from 'react';
-import { SceneContainer } from './components/3d/SceneContainer';
+import React, { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { Navbar } from './components/ui/Navbar';
 import { HeroSection } from './components/sections/HeroSection';
 import { ProjectsSection } from './components/sections/ProjectsSection';
@@ -10,85 +9,95 @@ import { Footer } from './components/ui/Footer';
 import { usePortfolioStore } from './store/usePortfolioStore';
 import { useAudioEngine } from './audio/useAudioEngine';
 
+const SceneContainer = lazy(() =>
+  import('./components/3d/SceneContainer').then((module) => ({ default: module.SceneContainer })),
+);
+
+const SECTION_IDS = ['hero', 'proyectos', 'laboratorio', 'sobre-mi', 'contacto'];
+
 export const App: React.FC = () => {
+  const [showScene, setShowScene] = useState(false);
   const setScrollProgress = usePortfolioStore((state) => state.setScrollProgress);
   const setActiveSection = usePortfolioStore((state) => state.setActiveSection);
   const theme = usePortfolioStore((state) => state.theme);
+  const brandTheme = usePortfolioStore((state) => state.labParams.colorTheme);
   const { playSectionTone, processScrollDynamics } = useAudioEngine();
+  const previousSection = useRef('hero');
 
-  const prevSectionRef = useRef<string>('hero');
-
-  // Asegurar sincronización reactiva de la clase .dark en el elemento HTML
   useEffect(() => {
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
+    document.documentElement.classList.toggle('dark', theme === 'dark');
+    document.documentElement.style.colorScheme = theme;
   }, [theme]);
 
-  // Sincronización del scroll para la orquestación 3D y audio de hitos
   useEffect(() => {
-    const handleScroll = () => {
+    document.documentElement.dataset.brandTheme = brandTheme;
+  }, [brandTheme]);
+
+  useEffect(() => {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const saveData = 'connection' in navigator && Boolean((navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData);
+    if (reduceMotion || saveData) return;
+    const timer = window.setTimeout(() => setShowScene(true), 500);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    let ticking = false;
+    const update = () => {
       const scrollY = window.scrollY;
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const progress = docHeight > 0 ? Math.min(Math.max(scrollY / docHeight, 0), 1) : 0;
+      const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = documentHeight > 0 ? Math.min(Math.max(scrollY / documentHeight, 0), 1) : 0;
       setScrollProgress(progress);
-      processScrollDynamics(scrollY, docHeight);
+      processScrollDynamics(scrollY, documentHeight);
 
-      // Detección de sección activa basada en posición
-      const sections = ['hero', 'proyectos', 'laboratorio', 'sobre-mi', 'contacto'];
-      const scrollPosition = scrollY + window.innerHeight * 0.35;
-
+      const marker = scrollY + window.innerHeight * 0.35;
       let currentSection = 'hero';
-      let sectionIndex = 0;
-
-      for (let i = 0; i < sections.length; i++) {
-        const el = document.getElementById(sections[i]);
-        if (el) {
-          const top = el.offsetTop;
-          const height = el.offsetHeight;
-          if (scrollPosition >= top && scrollPosition < top + height) {
-            currentSection = sections[i];
-            sectionIndex = i;
-            break;
-          }
+      let currentIndex = 0;
+      SECTION_IDS.forEach((id, index) => {
+        const element = document.getElementById(id);
+        if (element && marker >= element.offsetTop) {
+          currentSection = id;
+          currentIndex = index;
         }
-      }
+      });
 
-      if (currentSection !== prevSectionRef.current) {
-        prevSectionRef.current = currentSection;
+      if (currentSection !== previousSection.current) {
+        previousSection.current = currentSection;
         setActiveSection(currentSection);
-        playSectionTone(sectionIndex);
+        playSectionTone(currentIndex);
+      }
+      ticking = false;
+    };
+
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        window.requestAnimationFrame(update);
       }
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [setScrollProgress, setActiveSection, playSectionTone, processScrollDynamics]);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    update();
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [playSectionTone, processScrollDynamics, setActiveSection, setScrollProgress]);
 
   return (
-    <div className="relative min-h-screen bg-[#FAF5FF] dark:bg-[#0B0813] text-[#1E1035] dark:text-[#F5F3FF] selection:bg-purple-300 dark:selection:bg-purple-900/60 selection:text-purple-950 dark:selection:text-purple-200 transition-colors duration-300 overflow-x-hidden">
-      {/* Capa 1: Escena 3D WebGL persistente en background */}
-      <SceneContainer />
-
-      {/* Capa 2: Interfaz HTML de Alta Usabilidad (Two-Speed UX) */}
-      <div className="relative z-10 flex flex-col min-h-screen">
-        {/* Barra de Navegación Fija */}
+    <div className="app-shell min-h-screen overflow-x-hidden">
+      <a className="skip-link" href="#contenido-principal">Saltar al contenido principal</a>
+      {showScene && (
+        <Suspense fallback={null}>
+          <SceneContainer />
+        </Suspense>
+      )}
+      <div className="relative z-10 flex min-h-screen flex-col">
         <Navbar />
-
-        {/* Secciones de Contenido Principal */}
-        <main className="flex-grow space-y-12 sm:space-y-24">
+        <main id="contenido-principal" className="flex-grow" tabIndex={-1}>
           <HeroSection />
           <ProjectsSection />
           <LabSection />
           <AboutSection />
           <ContactSection />
         </main>
-
-        {/* Pie de Página */}
         <Footer />
       </div>
     </div>

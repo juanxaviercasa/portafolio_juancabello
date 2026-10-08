@@ -13,14 +13,17 @@ export const AudioToggle: React.FC<{ variant?: 'header' | 'floating' }> = ({ var
     toggleAudio();
   };
 
+  const pedagogicalMode = usePortfolioStore((state) => state.pedagogicalMode);
+  const isIntuitive = pedagogicalMode === 'intuitive';
+
   const isFloating = variant === 'floating';
 
   return (
     <button
       type="button"
       onClick={handleToggle}
-      aria-label={isAudioMuted ? `Activar concierto armónico en ${audioSettings.fundamentalFreq} Hz` : 'Silenciar concierto'}
-      title={isAudioMuted ? `Activar concierto neoclásico en ${audioSettings.fundamentalFreq} Hz` : `Silenciar concierto (${audioSettings.fundamentalFreq} Hz)`}
+      aria-label={isAudioMuted ? 'Encender sonido de la figura 3D' : 'Silenciar sonido'}
+      title={isAudioMuted ? 'Activar sonido de las ecuaciones' : `Silenciar sonido (${audioSettings.fundamentalFreq} Hz)`}
       className={`
         group relative flex items-center justify-center flex-shrink-0 gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl cursor-pointer whitespace-nowrap
         transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-400/50 dark:focus:ring-amber-400/50
@@ -49,11 +52,11 @@ export const AudioToggle: React.FC<{ variant?: 'header' | 'floating' }> = ({ var
 
       {isAudioMuted ? (
         <span className="hidden xl:inline-block text-xs font-mono text-slate-500 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300 whitespace-nowrap">
-          Audio OFF
+          {isIntuitive ? 'Sonido OFF' : 'Audio OFF'}
         </span>
       ) : (
         <span className="hidden xl:inline-block text-xs font-mono font-bold text-purple-700 dark:text-amber-300 whitespace-nowrap">
-          {audioSettings.fundamentalFreq}Hz
+          {isIntuitive ? 'Música ON' : `${audioSettings.fundamentalFreq}Hz`}
         </span>
       )}
     </button>

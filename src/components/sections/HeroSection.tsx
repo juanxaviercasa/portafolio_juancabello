@@ -1,132 +1,82 @@
 import React from 'react';
-import { ArrowDown, Download, Compass, Binary, Award, Code2 } from 'lucide-react';
+import { ArrowRight, Download, MapPin, MousePointer2, Sparkles } from 'lucide-react';
 import { siteConfig } from '../../data/siteConfig';
 import { useAudioEngine } from '../../audio/useAudioEngine';
-import { Latex } from '../ui/Latex';
 
 export const HeroSection: React.FC = () => {
   const { playTick } = useAudioEngine();
 
   return (
-    <section
-      id="hero"
-      className="relative min-h-[92vh] flex flex-col justify-center pt-28 sm:pt-32 pb-16 sm:pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto"
-    >
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-        {/* Columna Izquierda: Mensaje Central & Jerarquía Visual (55% desktop) */}
-        <div className="lg:col-span-7 z-10">
-          {/* Badge superior FÉNIX 357 con borde de cristal púrpura pulsante */}
-          <div className="inline-flex items-center gap-2 sm:gap-2.5 px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-full bg-purple-500/10 dark:bg-[#130E24]/80 border border-purple-500/50 dark:border-purple-400/60 text-purple-700 dark:text-purple-300 text-[11px] sm:text-xs md:text-sm font-mono mb-6 backdrop-blur-xl purple-crystal-pulse select-none max-w-full">
-            <span className="relative flex h-2 w-2 flex-shrink-0">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-purple-500"></span>
-            </span>
-            <span className="font-semibold tracking-wider">
-              [ FÉNIX 357 // <span className="hidden sm:inline">LABORATORIO CREATIVO &amp; MATEMÁTICO</span><span className="sm:hidden">LAB CREATIVO</span> ]
-            </span>
-          </div>
-
-          {/* Título Principal H1 con gradiente de texto metálico-neón */}
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-6 leading-[1.1]">
-            La belleza de la{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-700 via-fuchsia-600 to-amber-600 dark:from-purple-400 dark:via-fuchsia-300 dark:to-amber-300">
-              matemática
-            </span>
-            ,<br />
-            al servicio del{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-600 via-fuchsia-600 to-purple-700 dark:from-amber-300 dark:via-fuchsia-300 dark:to-purple-400">
-              aprendizaje
-            </span>
-            .
-          </h1>
-
-          {/* Manifiesto y Narrativa Fénix 357 */}
-          <p className="text-base sm:text-lg md:text-xl text-slate-600 dark:text-slate-300 font-normal leading-relaxed mb-8 max-w-2xl">
-            Soy <strong className="text-slate-900 dark:text-white font-semibold">{siteConfig.name}</strong> (<span className="font-mono font-semibold text-purple-600 dark:text-amber-300">{siteConfig.brandName}</span>), {siteConfig.role.toLowerCase()}. 
-            Diseño y desarrollo interfaces de aprendizaje de nueva generación integrando <strong className="text-purple-700 dark:text-purple-300">3 Pilares</strong> (Educación, Matemáticas y WebGL), navegando por <strong className="text-purple-700 dark:text-purple-300">5 Frecuencias</strong> y evaluando <strong className="text-purple-700 dark:text-purple-300">7 Dimensiones</strong> analíticas en GPU para humanizar conceptos abstractos.
+    <section id="hero" className="section-shell flex min-h-[min(900px,100svh)] items-center pt-28 sm:pt-32" data-od-id="hero">
+      <div className="hero-layout grid w-full items-center gap-10 lg:grid-cols-[minmax(0,0.94fr)_minmax(14rem,0.58fr)_minmax(19rem,0.76fr)] lg:gap-5 xl:gap-8">
+        <div className="hero-copy max-w-4xl">
+          <p className="section-kicker">
+            <Sparkles className="h-4 w-4" aria-hidden="true" />
+            Educación matemática · Desarrollo web
           </p>
-
-          {/* Botones de acción Two-Speed con gradiente Púrpura-Ámbar */}
-          <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-3 sm:gap-4 mb-12">
-            <a
-              href="#proyectos"
-              onClick={() => playTick(1000)}
-              className="flex items-center justify-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 rounded-2xl bg-gradient-to-r from-purple-600 via-fuchsia-600 to-amber-500 hover:from-purple-500 hover:via-fuchsia-500 hover:to-amber-400 text-white font-semibold text-sm sm:text-base shadow-lg shadow-purple-600/25 dark:shadow-purple-500/30 hover:shadow-xl hover:shadow-purple-500/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-purple-400 cursor-pointer whitespace-nowrap text-center"
-            >
-              <span>Explorar Proyectos</span>
-              <ArrowDown className="w-4 h-4 flex-shrink-0" />
+          <h1 className="max-w-[15ch] text-[clamp(2.8rem,7.5vw,5.35rem)] font-extrabold leading-[0.96] tracking-[-0.055em]">
+            Aprender, diseñar y construir con claridad.
+          </h1>
+          <p className="mt-6 max-w-[64ch] text-base leading-relaxed text-[var(--text-muted)] sm:text-xl">
+            {siteConfig.description} Desarrollo herramientas que convierten conceptos complejos en experiencias útiles y fáciles de explorar.
+          </p>
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+            <a href="#proyectos" className="btn-primary" onClick={() => playTick(980)}>
+              Ver proyectos reales <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </a>
-
-            <a
-              href="#laboratorio"
-              onClick={() => playTick(1200)}
-              className="flex items-center justify-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 rounded-2xl bg-white/80 dark:bg-[#130E24]/80 hover:bg-purple-50 dark:hover:bg-[#1C1335] text-slate-800 dark:text-white font-semibold text-sm sm:text-base border border-purple-200 dark:border-purple-500/30 hover:border-purple-400 dark:hover:border-purple-400/60 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 backdrop-blur-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400 cursor-pointer whitespace-nowrap text-center"
-            >
-              <Compass className="w-4 h-4 text-purple-600 dark:text-amber-400 flex-shrink-0" />
-              <span>Laboratorio 357</span>
-            </a>
-
-            <a
-              href={siteConfig.cvUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => playTick(1350)}
-              className="flex items-center justify-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 rounded-2xl bg-purple-50 dark:bg-[#130E24] hover:bg-purple-100 dark:hover:bg-purple-900/30 text-purple-900 dark:text-purple-200 font-semibold text-sm sm:text-base border border-purple-200 dark:border-purple-500/30 hover:border-purple-400 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 backdrop-blur-md focus:outline-none focus:ring-2 focus:ring-purple-400 cursor-pointer whitespace-nowrap text-center"
-            >
-              <Download className="w-4 h-4 text-purple-600 dark:text-amber-300 flex-shrink-0" />
-              <span>Descargar CV</span>
+            <a href={siteConfig.cvUrl} className="btn-secondary" target="_blank" rel="noopener noreferrer" onClick={() => playTick(1200)}>
+              <Download className="h-4 w-4" aria-hidden="true" /> Descargar CV
             </a>
           </div>
+          <p className="mt-5 flex items-center gap-2 text-sm font-medium text-[var(--text-muted)]">
+            <MapPin className="h-4 w-4 text-[var(--accent)]" aria-hidden="true" /> {siteConfig.location}
+          </p>
+        </div>
 
-          {/* Métricas de Impacto Directo (Concepto 357) */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4 p-4 sm:p-6 rounded-2xl bg-white/85 dark:bg-[#130E24]/80 backdrop-blur-xl border border-purple-200/80 dark:border-purple-500/20 shadow-lg shadow-purple-900/5 dark:shadow-2xl">
-            {siteConfig.stats.map((stat, idx) => (
-              <div key={idx} className="flex flex-col">
-                <span className="font-mono text-xl sm:text-2xl md:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-fuchsia-600 to-amber-500 dark:from-purple-400 dark:via-fuchsia-300 dark:to-amber-300">
-                  {stat.value}
-                </span>
-                <span className="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200 mt-0.5 sm:mt-1">
-                  {stat.label}
-                </span>
-                <span className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 sm:mt-1 leading-snug hidden sm:block">
-                  {stat.subtext}
-                </span>
+        <div className="hero-sculpture-window" aria-hidden="true">
+          <div className="hero-sculpture-label">
+            <img src={`${import.meta.env.BASE_URL}images/fenix_logo.jpg`} alt="" width="700" height="700" />
+            <span>FÉNIX 357</span>
+            <small>Geometría generativa</small>
+          </div>
+        </div>
+
+        <aside className="surface-card hero-profile relative overflow-hidden p-5 sm:p-6" aria-label="Perfil profesional resumido">
+          <div className="absolute right-0 top-0 h-32 w-32 rounded-full bg-[var(--accent-soft)] blur-3xl" aria-hidden="true" />
+          <div className="relative flex items-center gap-3">
+            <span className="h-14 w-14 shrink-0 overflow-hidden rounded-full border-2 border-[var(--surface)] bg-[var(--surface-soft)] shadow-[0_0_0_2px_var(--accent)]">
+              <img
+                src={`${import.meta.env.BASE_URL}images/Xavier%20Cabello.jpeg`}
+                alt="Retrato profesional de Juan Xavier Cabello"
+                className="portrait-avatar h-full w-full object-cover"
+                width="628"
+                height="624"
+              />
+            </span>
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.12em] text-[var(--accent-strong)]">Perfil híbrido</p>
+              <p className="text-sm font-semibold text-[var(--text-muted)]">Matemática · Educación · Web</p>
+            </div>
+          </div>
+          <h2 className="relative mt-3 text-2xl font-bold sm:text-3xl">Docencia que entiende el producto digital.</h2>
+          <p className="relative mt-4 text-sm leading-relaxed text-[var(--text-muted)] sm:text-base">
+            Combino experiencia en aula, formación matemática y desarrollo web para crear soluciones orientadas a estudiantes, docentes y organizaciones.
+          </p>
+          <dl className="relative mt-7 space-y-5 border-t border-[var(--border)] pt-6">
+            {siteConfig.stats.map((stat) => (
+              <div key={stat.label} className="grid grid-cols-[6.5rem_1fr] gap-3">
+                <dt className="text-xs font-bold uppercase tracking-wide text-[var(--text-muted)]">{stat.label}</dt>
+                <dd>
+                  <strong className="block text-sm text-[var(--text)] sm:text-base">{stat.value}</strong>
+                  <span className="block text-xs text-[var(--text-muted)] sm:text-sm">{stat.subtext}</span>
+                </dd>
               </div>
             ))}
-          </div>
-        </div>
-
-        {/* Columna Derecha: Tarjeta / Portal de Interacción 3D (45% desktop) */}
-        <div className="lg:col-span-5 relative flex flex-col items-center justify-center lg:items-end">
-          <div className="w-full max-w-md p-6 rounded-3xl bg-white/70 dark:bg-[#130E24]/75 backdrop-blur-2xl border border-purple-200/80 dark:border-purple-500/30 shadow-xl shadow-purple-900/10 dark:shadow-[0_0_35px_-5px_rgba(168,85,247,0.2)] space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping" />
-                <span className="text-xs font-mono font-semibold text-purple-900 dark:text-purple-200 uppercase tracking-wider">
-                  Escultura Fénix 357
-                </span>
-              </div>
-              <span className="text-xs font-mono text-purple-700 dark:text-amber-300 bg-purple-50 dark:bg-purple-950/60 px-2.5 py-1 rounded-full border border-purple-200 dark:border-amber-400/30">
-                60 FPS GLSL
-              </span>
-            </div>
-
-            <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-              Mueve el cursor o interactúa con la pantalla para modular la resonancia armónica de la escultura y los campos de Fourier en GPU.
-            </p>
-
-            <div className="pt-2 border-t border-purple-100 dark:border-purple-500/20 flex items-center justify-between text-xs font-mono text-slate-500 dark:text-slate-400">
-              <div className="flex items-center gap-1.5">
-                <span className="p-1 rounded-md bg-purple-500/10 text-purple-600 dark:text-purple-300"><Binary className="w-3.5 h-3.5" /></span>
-                <span className="p-1 rounded-md bg-fuchsia-500/10 text-fuchsia-600 dark:text-fuchsia-300"><Code2 className="w-3.5 h-3.5" /></span>
-                <span className="p-1 rounded-md bg-amber-500/10 text-amber-600 dark:text-amber-400"><Award className="w-3.5 h-3.5" /></span>
-              </div>
-              <span className="flex items-center gap-1.5 font-medium text-purple-700 dark:text-purple-300">
-                <Latex math="S^1 \times S^1" /> Variedad 357
-              </span>
-            </div>
-          </div>
-        </div>
+          </dl>
+          <a href="#laboratorio" className="relative mt-7 inline-flex min-h-11 items-center gap-2 text-sm font-bold text-[var(--accent-strong)] underline decoration-2 underline-offset-4">
+            <MousePointer2 className="h-4 w-4" aria-hidden="true" /> Explorar el laboratorio interactivo
+          </a>
+        </aside>
       </div>
     </section>
   );

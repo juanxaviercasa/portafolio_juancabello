@@ -87,19 +87,19 @@ export const SceneContainer: React.FC = () => {
   if (!hasWebGL) {
     // Fallback elegante para entornos sin soporte WebGL
     return (
-      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden math-grid-bg">
+      <div className="scene-stage math-grid-bg" aria-hidden="true">
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-500/10 dark:bg-cyan-500/10 rounded-full blur-3xl animate-pulse" />
       </div>
     );
   }
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden opacity-60 sm:opacity-90 dark:opacity-85 lg:opacity-100 transition-opacity duration-500">
+    <div className="scene-stage" aria-hidden="true">
       <Canvas
-        dpr={isMobile ? [1, 1.5] : [1, 2]}
+        dpr={isMobile ? 1 : [1, 1.5]}
         camera={{ fov: 45, position: [0, 0, 4.8], near: 0.1, far: 50 }}
         gl={{
-          antialias: true,
+          antialias: !isMobile,
           alpha: true,
           powerPreference: 'high-performance',
         }}

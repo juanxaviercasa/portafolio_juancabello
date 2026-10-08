@@ -2,6 +2,8 @@ import { create } from 'zustand';
 
 export type SurfaceMode = 'clifford' | 'fourier' | 'spherical' | 'klein';
 export type ThemeMode = 'dark' | 'light';
+export type ColorTheme = 'cyan' | 'violet' | 'amber' | 'emerald';
+export type PedagogicalMode = 'intuitive' | 'academic';
 
 export interface MathLabParams {
   surfaceMode: SurfaceMode;
@@ -9,7 +11,7 @@ export interface MathLabParams {
   amplitude: number;
   speed: number;
   wireframe: boolean;
-  colorTheme: 'cyan' | 'violet' | 'amber' | 'emerald';
+  colorTheme: ColorTheme;
   soundModulation: boolean;
 }
 
@@ -25,6 +27,11 @@ interface PortfolioState {
   theme: ThemeMode;
   toggleTheme: () => void;
   setTheme: (theme: ThemeMode) => void;
+
+  // Pedagogical Lens / Modo Didáctico ('intuitive' para explicaciones simples o 'academic' para rigor técnico)
+  pedagogicalMode: PedagogicalMode;
+  togglePedagogicalMode: () => void;
+  setPedagogicalMode: (mode: PedagogicalMode) => void;
 
   // Navigation & Scroll
   activeSection: string;
@@ -45,10 +52,13 @@ interface PortfolioState {
   setLabParam: <K extends keyof MathLabParams>(key: K, value: MathLabParams[K]) => void;
   resetLabParams: () => void;
 
-  // Mobile navigation
-  isMobileMenuOpen: boolean;
-  setMobileMenuOpen: (open: boolean) => void;
 }
+
+const getInitialColorTheme = (): ColorTheme => {
+  if (typeof window === 'undefined') return 'cyan';
+  const saved = localStorage.getItem('portfolio_brand_theme');
+  return saved === 'violet' || saved === 'amber' || saved === 'emerald' || saved === 'cyan' ? saved : 'cyan';
+};
 
 const defaultLabParams: MathLabParams = {
   surfaceMode: 'clifford',
@@ -56,7 +66,7 @@ const defaultLabParams: MathLabParams = {
   amplitude: 0.28,
   speed: 0.8,
   wireframe: false,
-  colorTheme: 'cyan',
+  colorTheme: getInitialColorTheme(),
   soundModulation: false,
 };
 
@@ -84,6 +94,17 @@ const getInitialTheme = (): ThemeMode => {
   return 'dark';
 };
 
+const getInitialPedagogicalMode = (): PedagogicalMode => {
+  if (typeof window !== 'undefined') {
+    const saved = localStorage.getItem('portfolio_pedagogical_mode');
+    if (saved === 'intuitive' || saved === 'academic') {
+      return saved;
+    }
+  }
+  // Por defecto 'intuitive' tal como confirmó el usuario: amigable para estudiantes y niños
+  return 'intuitive';
+};
+
 export const usePortfolioStore = create<PortfolioState>((set) => ({
   theme: getInitialTheme(),
   toggleTheme: () =>
@@ -109,6 +130,22 @@ export const usePortfolioStore = create<PortfolioState>((set) => ({
       }
     }
     set({ theme });
+  },
+
+  pedagogicalMode: getInitialPedagogicalMode(),
+  togglePedagogicalMode: () =>
+    set((state) => {
+      const nextMode = state.pedagogicalMode === 'intuitive' ? 'academic' : 'intuitive';
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('portfolio_pedagogical_mode', nextMode);
+      }
+      return { pedagogicalMode: nextMode };
+    }),
+  setPedagogicalMode: (mode) => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('portfolio_pedagogical_mode', mode);
+    }
+    set({ pedagogicalMode: mode });
   },
 
   activeSection: 'hero',
@@ -145,15 +182,21 @@ export const usePortfolioStore = create<PortfolioState>((set) => ({
     })),
 
   labParams: { ...defaultLabParams },
-  setLabParam: (key, value) =>
+  setLabParam: (key, value) => {
+    if (key === 'colorTheme' && typeof window !== 'undefined') {
+      localStorage.setItem('portfolio_brand_theme', String(value));
+    }
     set((state) => ({
       labParams: {
         ...state.labParams,
         [key]: value,
       },
-    })),
-  resetLabParams: () => set({ labParams: { ...defaultLabParams } }),
-
-  isMobileMenuOpen: false,
-  setMobileMenuOpen: (open) => set({ isMobileMenuOpen: open }),
+    }));
+  },
+  resetLabParams: () => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('portfolio_brand_theme', 'cyan');
+    }
+    set({ labParams: { ...defaultLabParams, colorTheme: 'cyan' } });
+  },
 }));

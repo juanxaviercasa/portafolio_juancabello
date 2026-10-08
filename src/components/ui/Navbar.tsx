@@ -1,177 +1,105 @@
-import React, { useState, useEffect } from 'react';
-import { Download, Menu, X, Compass, Layers, User, Mail } from 'lucide-react';
-import { AudioToggle } from './AudioToggle';
+import React, { useEffect, useRef, useState } from 'react';
+import { Download, FlaskConical, FolderKanban, Mail, Menu, UserRound, X } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
-import { useAudioEngine } from '../../audio/useAudioEngine';
 import { siteConfig } from '../../data/siteConfig';
+import { usePortfolioStore } from '../../store/usePortfolioStore';
+import { useAudioEngine } from '../../audio/useAudioEngine';
 
-const NAV_LINKS = [
-  { label: 'Proyectos', href: '#proyectos', icon: Layers },
-  { label: 'Laboratorio 3D', href: '#laboratorio', icon: Compass },
-  { label: 'Sobre Mí', href: '#sobre-mi', icon: User },
-  { label: 'Contacto', href: '#contacto', icon: Mail },
+const LINKS = [
+  { label: 'Proyectos', href: '#proyectos', id: 'proyectos', icon: FolderKanban },
+  { label: 'Laboratorio', href: '#laboratorio', id: 'laboratorio', icon: FlaskConical },
+  { label: 'Trayectoria', href: '#sobre-mi', id: 'sobre-mi', icon: UserRound },
+  { label: 'Contacto', href: '#contacto', id: 'contacto', icon: Mail },
 ];
 
 export const Navbar: React.FC = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const activeSection = usePortfolioStore((state) => state.activeSection);
+  const menuButton = useRef<HTMLButtonElement>(null);
   const { playTick } = useAudioEngine();
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const handleLinkClick = (freq = 880) => {
-    playTick(freq);
-    setIsMobileOpen(false);
-  };
+  useEffect(() => {
+    document.body.style.overflow = open ? 'hidden' : '';
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setOpen(false);
+        menuButton.current?.focus();
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.body.style.overflow = '';
+      window.removeEventListener('keydown', onKeyDown);
+    };
+  }, [open]);
+
+  const close = () => { setOpen(false); playTick(930); };
 
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
-          ? 'py-2.5 sm:py-3 bg-white/90 dark:bg-[#0B0813]/90 backdrop-blur-xl border-b border-purple-200/70 dark:border-purple-500/20 shadow-lg shadow-purple-900/5 dark:shadow-2xl dark:shadow-black/70'
-          : 'py-3.5 sm:py-5 bg-transparent'
-      }`}
-    >
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 xl:px-8 flex items-center justify-between gap-2 sm:gap-3 xl:gap-4">
-        {/* Brand / Logo FÉNIX 357 */}
-        <a
-          href="#hero"
-          onClick={() => handleLinkClick(1100)}
-          className="group flex items-center gap-2 sm:gap-2.5 flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-purple-500/50 rounded-xl p-1 cursor-pointer"
-        >
-          <div className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-purple-600 via-fuchsia-600 to-amber-500 flex items-center justify-center p-0.5 shadow-md shadow-purple-500/25 group-hover:shadow-purple-500/40 group-hover:scale-105 transition-all flex-shrink-0">
-            <div className="w-full h-full bg-[#FAF5FF] dark:bg-[#0B0813] rounded-[10px] flex items-center justify-center relative overflow-hidden">
-              {/* Geometric Phoenix Flame Glyph */}
-              <svg viewBox="0 0 24 24" className="w-4 h-4 sm:w-4.5 sm:h-4.5" fill="none">
-                <path
-                  d="M12 2L15 8L20 9L16 14L17 21L12 17L7 21L8 14L4 9L9 8L12 2Z"
-                  fill="url(#phoenix-nav-grad)"
-                  stroke="url(#phoenix-nav-stroke)"
-                  strokeWidth="1.2"
-                  strokeLinejoin="round"
-                />
-                <defs>
-                  <linearGradient id="phoenix-nav-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#A855F7" />
-                    <stop offset="50%" stopColor="#E879F9" />
-                    <stop offset="100%" stopColor="#F59E0B" />
-                  </linearGradient>
-                  <linearGradient id="phoenix-nav-stroke" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#C084FC" />
-                    <stop offset="100%" stopColor="#FDE047" />
-                  </linearGradient>
-                </defs>
-              </svg>
-            </div>
-          </div>
-          <div className="flex flex-col">
-            <div className="flex items-center gap-1 sm:gap-1.5 whitespace-nowrap">
-              <span className="hidden min-[420px]:inline font-mono font-semibold tracking-[0.1em] sm:tracking-[0.16em] text-slate-900 dark:text-white text-xs sm:text-sm uppercase group-hover:text-purple-600 dark:group-hover:text-purple-300 transition-colors">
-                Juan Cabello
-              </span>
-              <span className="hidden min-[420px]:inline text-purple-500 font-mono font-bold text-xs">//</span>
-              <span className="font-mono font-bold tracking-[0.15em] sm:tracking-[0.2em] text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-fuchsia-500 to-amber-500 dark:from-purple-400 dark:via-fuchsia-300 dark:to-amber-400 text-xs sm:text-sm">
-                FÉNIX 357
-              </span>
-            </div>
-            <span className="hidden 2xl:block text-[10px] sm:text-[11px] font-mono text-purple-900/60 dark:text-purple-300/70 tracking-widest uppercase whitespace-nowrap">
-              3 Pilares &middot; 5 Frecuencias &middot; 7 Dimensiones
-            </span>
-          </div>
+    <header className={`fixed inset-x-0 top-0 z-50 border-b transition-[background-color,border-color,box-shadow] duration-200 ${scrolled || open ? 'border-[var(--border)] bg-[color:color-mix(in_srgb,var(--surface)_94%,transparent)] shadow-sm backdrop-blur-xl' : 'border-transparent bg-transparent'}`}>
+      <div className="mx-auto flex min-h-[4.75rem] w-[min(100%-1.25rem,76rem)] items-center justify-between gap-3">
+        <a href="#hero" className="flex min-h-11 min-w-0 items-center gap-3 rounded-xl" onClick={close} aria-label="Juan Cabello, ir al inicio">
+          <span className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full border-2 border-[var(--surface)] bg-[var(--surface-soft)] shadow-[0_0_0_2px_var(--accent)]" aria-hidden="true">
+            <img
+              src={`${import.meta.env.BASE_URL}images/Xavier%20Cabello.jpeg`}
+              alt=""
+              className="portrait-avatar h-full w-full object-cover"
+              width="628"
+              height="624"
+            />
+          </span>
+          <span className="min-w-0">
+            <strong className="block truncate text-sm leading-tight text-[var(--text)]">Juan Cabello</strong>
+            <span className="block truncate text-[0.68rem] font-bold uppercase tracking-[0.12em] text-[var(--text-muted)]">Educación · Web</span>
+          </span>
         </a>
 
-        {/* Desktop Navigation Links (Visible en pantallas lg >= 1024px) */}
-        <nav className="hidden lg:flex items-center gap-1 bg-purple-50/70 dark:bg-[#130E24]/80 p-1 rounded-full border border-purple-200/70 dark:border-purple-500/20 backdrop-blur-md shadow-sm">
-          {NAV_LINKS.map((link) => {
-            const Icon = link.icon;
+        <nav className="hidden items-center gap-1 lg:flex" aria-label="Navegación principal">
+          {LINKS.map((link) => {
+            const active = activeSection === link.id;
             return (
-              <a
-                key={link.href}
-                href={link.href}
-                onClick={() => handleLinkClick(980)}
-                className="flex items-center gap-1.5 px-2.5 xl:px-3.5 py-1.5 rounded-full text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-purple-600 dark:hover:text-amber-300 hover:bg-white dark:hover:bg-purple-900/40 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500/40 cursor-pointer whitespace-nowrap"
-              >
-                <Icon className="w-3.5 h-3.5 opacity-80" />
-                <span>{link.label}</span>
+              <a key={link.id} href={link.href} aria-current={active ? 'location' : undefined} onClick={close} className={`flex min-h-11 items-center rounded-xl px-3 text-sm font-bold transition-colors ${active ? 'bg-[var(--accent-soft)] text-[var(--accent-strong)]' : 'text-[var(--text-muted)] hover:bg-[var(--surface-soft)] hover:text-[var(--text)]'}`}>
+                {link.label}
               </a>
             );
           })}
         </nav>
 
-        {/* Acciones Header Unificadas (Desktop, Tablet y Móvil) */}
-        <div className="flex items-center gap-1.5 sm:gap-2 xl:gap-2.5 flex-shrink-0">
-          {/* Botón selector de tema compacto */}
+        <div className="flex items-center gap-2">
           <ThemeToggle variant="icon" />
-
-          {/* Botón selector de audio con síntesis armónica */}
-          <AudioToggle variant="header" />
-
-          {/* Botón Descargar CV (Visible desde tablet sm >= 640px) */}
-          <a
-            href={siteConfig.cvUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() => handleLinkClick(1320)}
-            className="hidden sm:inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 xl:px-4 py-2 rounded-xl text-xs font-semibold bg-gradient-to-r from-purple-600 via-fuchsia-600 to-amber-500 hover:from-purple-500 hover:via-fuchsia-500 hover:to-amber-400 text-white shadow-md shadow-purple-500/25 hover:shadow-purple-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-purple-400 cursor-pointer whitespace-nowrap"
-          >
-            <Download className="w-3.5 h-3.5 group-hover:-translate-y-0.5 transition-transform flex-shrink-0" />
-            <span className="hidden xl:inline">Descargar </span>
-            <span>CV</span>
+          <a href={siteConfig.cvUrl} target="_blank" rel="noopener noreferrer" className="btn-primary hidden sm:inline-flex">
+            <Download className="h-4 w-4" aria-hidden="true" /> CV
           </a>
-
-          {/* Botón de Menú Hamburguesa visible en Móvil y Tablet (< lg: 1024px) */}
-          <button
-            onClick={() => setIsMobileOpen(!isMobileOpen)}
-            className="lg:hidden p-2 rounded-xl bg-purple-50 dark:bg-[#130E24] border border-purple-200 dark:border-purple-500/30 text-slate-700 dark:text-slate-300 hover:text-purple-600 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 cursor-pointer flex-shrink-0"
-            aria-label={isMobileOpen ? 'Cerrar menú' : 'Abrir menú'}
-          >
-            {isMobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          <button ref={menuButton} type="button" className="grid h-11 w-11 place-items-center rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] lg:hidden" aria-label={open ? 'Cerrar menú' : 'Abrir menú'} aria-expanded={open} aria-controls="mobile-navigation" onClick={() => setOpen((value) => !value)}>
+            {open ? <X className="h-5 w-5" aria-hidden="true" /> : <Menu className="h-5 w-5" aria-hidden="true" />}
           </button>
         </div>
       </div>
 
-      {/* Mobile & Tablet Drawer Menu (< lg) */}
-      {isMobileOpen && (
-        <div className="lg:hidden px-4 pt-3 pb-6 bg-white/95 dark:bg-[#0B0813]/95 backdrop-blur-2xl border-b border-purple-200 dark:border-purple-500/20 space-y-2 mt-2 shadow-xl animate-fadeIn">
-          {NAV_LINKS.map((link) => {
-            const Icon = link.icon;
-            return (
-              <a
-                key={link.href}
-                href={link.href}
-                onClick={() => handleLinkClick(950)}
-                className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-800 dark:text-slate-200 hover:bg-purple-50 dark:hover:bg-[#130E24] hover:text-purple-600 dark:hover:text-amber-300 transition-colors cursor-pointer"
-              >
-                <Icon className="w-4 h-4 text-purple-600 dark:text-amber-400" />
-                <span>{link.label}</span>
-              </a>
-            );
-          })}
-
-          <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-purple-50/80 dark:bg-[#130E24] border border-purple-200/80 dark:border-purple-500/20 my-2">
-            <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">Tema Visual:</span>
-            <ThemeToggle variant="pill" showLabel={true} />
-          </div>
-
-          <div className="pt-2 border-t border-purple-200 dark:border-purple-500/20">
-            <a
-              href={siteConfig.cvUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => handleLinkClick(1320)}
-              className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-semibold bg-gradient-to-r from-purple-600 via-fuchsia-600 to-amber-500 text-white shadow-md shadow-purple-500/30 cursor-pointer"
-            >
-              <Download className="w-4 h-4" />
-              <span>Descargar Currículum Vitae (PDF)</span>
+      {open && (
+        <nav id="mobile-navigation" className="max-h-[calc(100svh-4.75rem)] overflow-y-auto overscroll-contain border-t border-[var(--border)] bg-[var(--surface)] px-3 py-4 lg:hidden" aria-label="Navegación móvil">
+          <div className="mx-auto grid w-full max-w-xl gap-2">
+            {LINKS.map((link) => {
+              const Icon = link.icon;
+              return (
+                <a key={link.id} href={link.href} aria-current={activeSection === link.id ? 'location' : undefined} onClick={close} className="flex min-h-12 items-center gap-3 rounded-xl px-4 font-bold text-[var(--text)] hover:bg-[var(--surface-soft)]">
+                  <Icon className="h-5 w-5 text-[var(--accent)]" aria-hidden="true" /> {link.label}
+                </a>
+              );
+            })}
+            <a href={siteConfig.cvUrl} target="_blank" rel="noopener noreferrer" className="btn-primary mt-2 sm:hidden" onClick={close}>
+              <Download className="h-4 w-4" aria-hidden="true" /> Descargar CV
             </a>
           </div>
-        </div>
+        </nav>
       )}
     </header>
   );
